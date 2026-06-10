@@ -46,6 +46,12 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Network' },
       },
       {
+        path: 'network/maintenance',
+        name: 'controller-maintenance',
+        component: () => import('@/views/ControllerMaintenanceView.vue'),
+        meta: { title: 'Controller maintenance' },
+      },
+      {
         path: 'settings',
         name: 'settings',
         component: () => import('@/views/SettingsView.vue'),
