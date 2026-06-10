@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Devices · Z-Wave UI</title>
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="logo">Z</div><b>Z-Wave</b></div>
+    <a class="nav-item" href="dashboard.html"><span class="ico">🏠</span> Dashboard</a>
+    <a class="nav-item active" href="devices.html"><span class="ico">🔌</span> Devices</a>
+    <a class="nav-item" href="add-device.html"><span class="ico">➕</span> Add device</a>
+    <a class="nav-item" href="network.html"><span class="ico">🕸</span> Network</a>
+    <a class="nav-item" href="settings.html"><span class="ico">⚙</span> Settings</a>
+    <div class="spacer"></div>
+    <div class="card card-pad">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--s-3)">
+        <div><div style="font-weight:600;font-size:.85rem">Advanced mode</div><div class="muted small">Show table & power tools</div></div>
+        <label class="switch"><input type="checkbox" data-adv-switch onchange="toggleAdvanced();document.getElementById('tableView').classList.toggle('open')"><span class="track"></span></label>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn menu-btn" onclick="toggleMenu()">☰</button>
+      <div class="search">🔍 <input placeholder="Search 25 devices…"></div>
+      <div class="spacer"></div>
+      <button class="icon-btn" onclick="toggleTheme()"><span data-theme-icon>☾</span></button>
+      <a class="btn btn-primary btn-sm only-desktop" href="add-device.html">+ Add</a>
+    </header>
+
+    <main class="content">
+      <div style="display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap;margin-bottom:var(--s-4)">
+        <h1 style="margin:0;flex:1">Devices</h1>
+        <select class="input" style="width:auto"><option>Group by Room</option><option>Group by Type</option><option>Group by Status</option></select>
+        <div class="pill">Cards</div>
+        <div class="pill" data-adv-only>Table</div>
+      </div>
+
+      <!-- Card view -->
+      <div class="section-title"><h2>Entryway</h2><span class="count">· 2</span></div>
+      <div class="grid-cards">
+        <div class="device dead" onclick="go('device-detail.html')">
+          <div class="row"><div class="glyph">🔒</div><span class="fav active" onclick="toggleFav(event,this)">★</span></div>
+          <div><div class="name">Front Door Lock</div><div class="loc">Entryway</div></div>
+          <div class="state"><span class="dot dot-danger"></span> Not responding · 🔋 40%</div>
+        </div>
+        <div class="device" onclick="go('device-detail.html')">
+          <div class="row"><div class="glyph">🚶</div><span class="fav" onclick="toggleFav(event,this)">☆</span></div>
+          <div><div class="name">Entry Motion</div><div class="loc">Entryway</div></div>
+          <div class="state"><span class="dot dot-ok"></span> Idle · 🔋 88%</div>
+        </div>
+      </div>
+
+      <div class="section-title"><h2>Living Room</h2><span class="count">· 4</span></div>
+      <div class="grid-cards">
+        <div class="device on" onclick="go('device-detail.html')">
+          <div class="row"><div class="glyph">💡</div><span class="fav active" onclick="toggleFav(event,this)">★</span></div>
+          <div><div class="name">Living Room Dimmer</div><div class="loc">Living Room</div></div>
+          <div class="state"><span class="dot dot-ok"></span> On · 60% <span class="pill warn" style="margin-left:auto">🆕</span></div>
+          <div class="control" onclick="stop(event)"><input class="slider" type="range" min="0" max="100" value="60"></div>
+        </div>
+        <div class="device on" onclick="go('device-detail.html')">
+          <div class="row"><div class="glyph">💡</div><span class="fav" onclick="toggleFav(event,this)">☆</span></div>
+          <div><div class="name">Floor Lamp</div><div class="loc">Living Room</div></div>
+          <div class="state"><span class="dot dot-ok"></span> On · 80%</div>
+          <div class="control" onclick="stop(event)"><input class="slider" type="range" min="0" max="100" value="80"></div>
+        </div>
+        <div class="device" onclick="go('device-detail.html')">
+          <div class="row"><div class="glyph">📺</div><span class="fav" onclick="toggleFav(event,this)">☆</span></div>
+          <div><div class="name">TV Plug</div><div class="loc">Living Room</div></div>
+          <div class="state"><span class="dot dot-idle"></span> Off · 0 W</div>
+          <div class="control" onclick="stop(event)"><label class="switch"><input type="checkbox"><span class="track"></span></label></div>
+        </div>
+        <div class="device" onclick="go('device-detail.html')">
+          <div class="row"><div class="glyph">🪟</div><span class="fav" onclick="toggleFav(event,this)">☆</span></div>
+          <div><div class="name">Window Shade</div><div class="loc">Living Room</div></div>
+          <div class="state"><span class="dot dot-ok"></span> Open · 100%</div>
+          <div class="control" onclick="stop(event)"><input class="slider" type="range" min="0" max="100" value="100"></div>
+        </div>
+      </div>
+
+      <!-- Table view (Advanced reveal) -->
+      <div id="tableView" class="reveal-body" style="margin-top:var(--s-6)">
+        <div class="section-title"><h2>All devices</h2><span class="badge-adv">Advanced table</span>
+          <div class="spacer" style="flex:1"></div>
+          <button class="btn btn-outline btn-sm">⚙ Columns</button>
+          <button class="btn btn-ghost btn-sm">Reset</button>
+        </div>
+        <div class="card" style="overflow:auto">
+          <table class="table responsive">
+            <thead><tr><th>ID</th><th>Name</th><th>Product</th><th>Location</th><th>Security</th><th>Power</th><th>FW</th><th>Status</th><th>Last seen</th></tr></thead>
+            <tbody>
+              <tr onclick="go('device-detail.html')" style="cursor:pointer">
+                <td data-label="ID">14</td><td data-label="Name">Living Room Dimmer</td><td data-label="Product">Inovelli LZW31-SN</td><td data-label="Location">Living Room</td>
+                <td data-label="Security"><span class="pill ok">S2</span></td><td data-label="Power">Mains</td><td data-label="FW">1.48</td>
+                <td data-label="Status"><span class="pill ok">Alive</span></td><td data-label="Last seen">12 s</td>
+              </tr>
+              <tr onclick="go('device-detail.html')" style="cursor:pointer">
+                <td data-label="ID">7</td><td data-label="Name">Front Door Lock</td><td data-label="Product">Yale YRD256</td><td data-label="Location">Entryway</td>
+                <td data-label="Security"><span class="pill ok">S2 AC</span></td><td data-label="Power">🔋 40%</td><td data-label="FW">3.4</td>
+                <td data-label="Status"><span class="pill danger">Dead</span></td><td data-label="Last seen">2 h</td>
+              </tr>
+              <tr onclick="go('device-detail.html')" style="cursor:pointer">
+                <td data-label="ID">22</td><td data-label="Name">Motion Sensor</td><td data-label="Product">Aeotec ZW100</td><td data-label="Location">Living Room</td>
+                <td data-label="Security"><span class="pill warn">S0</span></td><td data-label="Power">🔋 15%</td><td data-label="FW">1.13</td>
+                <td data-label="Status"><span class="pill warn">Asleep</span></td><td data-label="Last seen">6 m</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<a class="btn btn-primary fab only-mobile" href="add-device.html">＋ Add</a>
+<nav class="bottom-nav">
+  <a href="dashboard.html"><span class="ico">🏠</span>Home</a>
+  <a class="active"><span class="ico">🔌</span>Devices</a>
+  <a href="add-device.html"><span class="ico">➕</span>Add</a>
+  <a href="network.html"><span class="ico">🕸</span>Network</a>
+  <a href="settings.html"><span class="ico">⚙</span>Settings</a>
+</nav>
+<script src="assets/app.js"></script>
+</body>
+</html>

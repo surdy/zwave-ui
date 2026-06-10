@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Living Room Dimmer · Z-Wave UI</title>
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="logo">Z</div><b>Z-Wave</b></div>
+    <a class="nav-item" href="dashboard.html"><span class="ico">🏠</span> Dashboard</a>
+    <a class="nav-item active" href="devices.html"><span class="ico">🔌</span> Devices</a>
+    <a class="nav-item" href="add-device.html"><span class="ico">➕</span> Add device</a>
+    <a class="nav-item" href="network.html"><span class="ico">🕸</span> Network</a>
+    <a class="nav-item" href="settings.html"><span class="ico">⚙</span> Settings</a>
+    <div class="spacer"></div>
+    <div class="card card-pad">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--s-3)">
+        <div><div style="font-weight:600;font-size:.85rem">Advanced mode</div><div class="muted small">Show power-user tools</div></div>
+        <label class="switch"><input type="checkbox" data-adv-switch onchange="toggleAdvanced()"><span class="track"></span></label>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn menu-btn" onclick="toggleMenu()">☰</button>
+      <a class="icon-btn" href="devices.html" title="Back">←</a>
+      <span class="page-title">Living Room Dimmer</span>
+      <div class="spacer"></div>
+      <button class="icon-btn" onclick="toggleTheme()"><span data-theme-icon>☾</span></button>
+      <button class="icon-btn">👤</button>
+    </header>
+
+    <main class="content">
+
+      <!-- Header card -->
+      <div class="card card-pad" style="display:flex;gap:var(--s-4);align-items:center;flex-wrap:wrap">
+        <div class="glyph" style="width:60px;height:60px;font-size:1.8rem;background:var(--accent-on);border-radius:var(--r-md);display:grid;place-items:center">💡</div>
+        <div style="flex:1;min-width:200px">
+          <div style="display:flex;align-items:center;gap:var(--s-2)">
+            <h1 style="margin:0">Living Room Dimmer</h1>
+            <span class="fav active" style="font-size:1.2rem;cursor:pointer" onclick="toggleFav(event,this)">★</span>
+          </div>
+          <div class="muted">Living Room · Inovelli LZW31-SN</div>
+          <div style="display:flex;gap:var(--s-2);margin-top:var(--s-2);flex-wrap:wrap">
+            <span class="pill ok"><span class="dot"></span> Online</span>
+            <span class="pill"><span class="dot"></span> 🛡 S2 Secure</span>
+            <span class="pill"><span class="dot"></span> 🔌 Mains</span>
+            <span class="pill info" data-adv-only>Node 14</span>
+            <span class="pill warn">🆕 Firmware available</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:var(--s-2)">
+          <button class="btn btn-outline btn-sm">📡 Ping</button>
+          <button class="btn btn-outline btn-sm">🔄 Refresh</button>
+          <button class="btn btn-outline btn-sm" data-adv-only>🩺 Diagnose</button>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div style="margin-top:var(--s-5)">
+        <div class="tabs">
+          <div class="tab active" onclick="showTab(this,'t-overview')">Overview</div>
+          <div class="tab" onclick="showTab(this,'t-controls')">Controls</div>
+          <div class="tab" onclick="showTab(this,'t-config')">Configuration <span class="badge-adv">Adv</span></div>
+          <div class="tab" onclick="showTab(this,'t-assoc')">Associations <span class="badge-adv">Adv</span></div>
+          <div class="tab" onclick="showTab(this,'t-fw')">Firmware <span class="badge-adv">Adv</span></div>
+          <div class="tab" onclick="showTab(this,'t-activity')">Activity</div>
+          <div class="tab" onclick="showTab(this,'t-advanced')">Advanced <span class="badge-expert">Expert</span></div>
+        </div>
+
+        <!-- OVERVIEW (Tier 1) -->
+        <section id="t-overview" class="tabpanel active">
+          <div class="grid-cards" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr))">
+            <div class="card card-pad">
+              <div class="muted small">Brightness</div>
+              <div style="font-size:1.6rem;font-weight:700;margin:var(--s-1) 0">60%</div>
+              <input class="slider" type="range" min="0" max="100" value="60">
+              <div style="display:flex;gap:var(--s-2);margin-top:var(--s-3)">
+                <button class="btn btn-primary btn-sm btn-block">On</button>
+                <button class="btn btn-outline btn-sm btn-block">Off</button>
+              </div>
+            </div>
+            <div class="card card-pad">
+              <div class="muted small">Power use</div>
+              <div style="font-size:1.6rem;font-weight:700;margin:var(--s-1) 0">14 W</div>
+              <div class="muted small">Today: 0.21 kWh</div>
+            </div>
+            <div class="card card-pad">
+              <div class="muted small">Status LED</div>
+              <div style="display:flex;gap:6px;margin:var(--s-2) 0">
+                <span class="pill" style="background:#22c55e22;color:#16a34a">Green</span>
+              </div>
+              <button class="btn btn-outline btn-sm">Change color</button>
+            </div>
+          </div>
+          <div class="card card-pad" style="margin-top:var(--s-4)">
+            <h3>Device info</h3>
+            <div class="kv"><span class="k">Room</span><span class="v">Living Room ✎</span></div>
+            <div class="kv"><span class="k">Name</span><span class="v">Living Room Dimmer ✎</span></div>
+            <div class="kv"><span class="k">Manufacturer</span><span class="v">Inovelli</span></div>
+            <div class="kv"><span class="k">Model</span><span class="v">LZW31-SN Red Series</span></div>
+            <div class="kv"><span class="k">Firmware</span><span class="v">1.48</span></div>
+            <div class="kv" data-adv-only><span class="k">Node ID</span><span class="v">14</span></div>
+            <div class="kv" data-adv-only><span class="k">Protocol</span><span class="v">Z-Wave · 100 kbps</span></div>
+            <div class="kv" data-adv-only><span class="k">Last seen</span><span class="v">12 s ago</span></div>
+          </div>
+        </section>
+
+        <!-- CONTROLS (Tier 1/2 — capability driven) -->
+        <section id="t-controls" class="tabpanel">
+          <p class="muted">All values exposed by this device, grouped by function. <span class="adv-hint pill info">Advanced: grouped by command class</span></p>
+          <div class="card card-pad">
+            <h3>Multilevel Switch <span class="muted small" data-adv-only>· CC 0x26</span></h3>
+            <div class="kv"><span class="k">Target value</span><span class="v">60%</span></div>
+            <div class="kv"><span class="k">Current value</span><span class="v">60%</span></div>
+            <div class="kv"><span class="k">Ramp duration</span><span class="v">2 s</span></div>
+          </div>
+          <div class="card card-pad" style="margin-top:var(--s-4)">
+            <h3>Meter <span class="muted small" data-adv-only>· CC 0x32</span></h3>
+            <div class="kv"><span class="k">Electric power</span><span class="v">14 W <button class="btn btn-ghost btn-sm">🔄</button></span></div>
+            <div class="kv"><span class="k">Electric consumption</span><span class="v">3.42 kWh</span></div>
+            <div class="kv"><span class="k">Voltage</span><span class="v">119.8 V</span></div>
+          </div>
+          <div class="card card-pad" style="margin-top:var(--s-4)" data-adv-only>
+            <h3>Central Scene <span class="muted small">· CC 0x5B</span></h3>
+            <div class="kv"><span class="k">Scene 001</span><span class="v">KeyPressed</span></div>
+            <div class="kv"><span class="k">Scene 002</span><span class="v">KeyHeldDown</span></div>
+          </div>
+        </section>
+
+        <!-- CONFIGURATION (Tier 2, HA-style with tooltips) -->
+        <section id="t-config" class="tabpanel">
+          <div class="banner info">Friendly device settings. Hover the <span class="help">?</span> for an explanation of each.</div>
+          <div class="card card-pad" style="margin-top:var(--s-4)">
+            <div class="field">
+              <label>Dimming speed (from switch) <span class="help" title="How fast the light ramps to the target level when operated at the physical switch.">?</span></label>
+              <select class="input"><option>Fast (1 s)</option><option selected>Normal (2 s)</option><option>Slow (4 s)</option></select>
+            </div>
+            <div class="field">
+              <label>Minimum brightness <span class="help" title="Lowest level the load will dim to. Raise it if your bulbs flicker or buzz at low levels.">?</span></label>
+              <input class="input" type="number" value="10"> <span class="muted small">%  · default 1</span>
+            </div>
+            <div class="field">
+              <label>LED bar behavior <span class="help" title="What the LED status bar shows during normal operation.">?</span></label>
+              <select class="input"><option selected>Show brightness level</option><option>Always off</option><option>Custom color</option></select>
+            </div>
+            <div class="field" style="display:flex;align-items:center;justify-content:space-between">
+              <label style="margin:0">Power-on state restores last level <span class="help" title="After a power outage, return to the brightness that was set before, instead of full on.">?</span></label>
+              <label class="switch"><input type="checkbox" checked><span class="track"></span></label>
+            </div>
+
+            <div class="reveal-toggle" onclick="toggleReveal(this,'cfg-advanced')"><span data-caret>⌄</span> Show all 32 parameters</div>
+            <div id="cfg-advanced" class="reveal-body">
+              <div class="kv"><span class="k">#22 Switch mode <span class="help" title="On/Off vs dimmer mode.">?</span></span><span class="v"><select class="input" style="width:auto"><option>Dimmer</option><option>On/Off</option></select></span></div>
+              <div class="kv"><span class="k">#51 Disable physical relay</span><span class="v"><label class="switch"><input type="checkbox"><span class="track"></span></label></span></div>
+              <div class="kv"><span class="k">#1 → #32</span><span class="v muted">…full list</span></div>
+            </div>
+
+            <div class="reveal-toggle" data-adv-only onclick="toggleReveal(this,'cfg-raw')"><span class="badge-expert">Expert</span> &nbsp;<span data-caret>⌄</span> Custom configuration (raw)</div>
+            <div id="cfg-raw" class="reveal-body card card-pad" style="background:var(--color-surface-2);margin-top:var(--s-3)">
+              <div style="display:flex;gap:var(--s-2);flex-wrap:wrap;align-items:end">
+                <div class="field" style="margin:0"><label>Param #</label><input class="input" style="width:90px" value="22"></div>
+                <div class="field" style="margin:0"><label>Size</label><select class="input" style="width:80px"><option>1</option><option>2</option><option>4</option></select></div>
+                <div class="field" style="margin:0"><label>Value</label><input class="input" style="width:120px" value="1"></div>
+                <div class="field" style="margin:0"><label>Format</label><select class="input"><option>Unsigned</option><option>Signed</option></select></div>
+                <button class="btn btn-outline btn-sm">GET</button>
+                <button class="btn btn-primary btn-sm">SET</button>
+                <button class="btn btn-ghost btn-sm">Reset</button>
+              </div>
+            </div>
+            <div style="display:flex;gap:var(--s-2);margin-top:var(--s-5)">
+              <button class="btn btn-primary">Save changes</button>
+              <button class="btn btn-ghost">Reset all to default</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ASSOCIATIONS (Tier 2, plain-language) -->
+        <section id="t-assoc" class="tabpanel">
+          <div class="banner info">Associations let this device control others directly, even if the hub is offline. <span class="help" title="A direct Z-Wave link between two devices that bypasses the controller.">?</span></div>
+          <div class="card card-pad" style="margin-top:var(--s-4)">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <h3 style="margin:0">When this dimmer is pressed, control…</h3>
+              <button class="btn btn-primary btn-sm">+ Add</button>
+            </div>
+            <div class="list" style="margin-top:var(--s-3)">
+              <div class="item"><div class="glyph">💡</div><div class="grow"><div style="font-weight:600">Floor Lamp</div><div class="muted small">Group 2 · Basic Set <span data-adv-only>· endpoint 0</span></div></div><button class="icon-btn">🗑</button></div>
+              <div class="item"><div class="glyph">🛜</div><div class="grow"><div style="font-weight:600">Controller (Lifeline)</div><div class="muted small">Group 1 · reports status to hub</div></div><span class="muted small">required</span></div>
+            </div>
+            <div class="reveal-toggle" data-adv-only onclick="toggleReveal(this,'assoc-adv')"><span data-caret>⌄</span> Multi-channel & advanced groups</div>
+            <div id="assoc-adv" class="reveal-body">
+              <div class="kv"><span class="k">Group 3 — Multilevel Set (multi-channel)</span><span class="v muted">empty</span></div>
+              <label style="display:flex;gap:var(--s-2);align-items:center;margin-top:var(--s-3)" class="small muted"><input type="checkbox"> I know what I'm doing — bypass association compatibility check</label>
+            </div>
+          </div>
+        </section>
+
+        <!-- FIRMWARE (Tier 2) -->
+        <section id="t-fw" class="tabpanel">
+          <div class="card card-pad">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:var(--s-3)">
+              <div><h3 style="margin:0">Firmware 1.48 <span class="pill warn">Update available → 1.61</span></h3><div class="muted small">Inovelli · stable channel</div></div>
+              <button class="btn btn-primary">Update to 1.61</button>
+            </div>
+            <details style="margin-top:var(--s-3)"><summary class="muted">Changelog 1.61</summary><p class="muted small">Fixes LED flicker at low dim levels; adds smart-bulb mode; improves power reporting accuracy.</p></details>
+            <div style="display:flex;gap:var(--s-4);margin-top:var(--s-3)" class="small muted" data-adv-only>
+              <label><input type="checkbox"> Include pre-releases</label>
+              <label><input type="checkbox"> Show downgrades</label>
+            </div>
+          </div>
+        </section>
+
+        <!-- ACTIVITY -->
+        <section id="t-activity" class="tabpanel">
+          <div class="card card-pad">
+            <div style="display:flex;justify-content:space-between;align-items:center"><h3 style="margin:0">Recent activity</h3><div class="search" style="max-width:220px">🔍 <input placeholder="Filter events"></div></div>
+            <div class="list mono small" style="margin-top:var(--s-3)">
+              <div class="item"><span class="muted">10:42:11</span><span class="grow">Multilevel Switch → 60%</span></div>
+              <div class="item"><span class="muted">10:41:55</span><span class="grow">Central Scene 001 KeyPressed</span></div>
+              <div class="item"><span class="muted">10:30:02</span><span class="grow">Meter report: 14 W</span></div>
+              <div class="item"><span class="muted">09:58:40</span><span class="grow">Wake up / nodeStatus: Alive</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ADVANCED (Tier 3) -->
+        <section id="t-advanced" class="tabpanel">
+          <div class="banner danger">Expert tools. Some actions can disrupt the device or network.</div>
+          <div class="grid-cards" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr));margin-top:var(--s-4)">
+            <div class="card card-pad"><h3>Re-interview</h3><p class="muted small">Re-read this device's capabilities.</p><button class="btn btn-outline btn-sm">Re-interview</button></div>
+            <div class="card card-pad"><h3>Rebuild routes</h3><p class="muted small">Recalculate the mesh path to this node.</p><button class="btn btn-outline btn-sm">Rebuild</button></div>
+            <div class="card card-pad"><h3>Set date & time</h3><p class="muted small">Sync the device clock.</p><button class="btn btn-outline btn-sm">Sync</button></div>
+            <div class="card card-pad"><h3>Health check</h3><p class="muted small">Measure link latency, RSSI, SNR.</p><button class="btn btn-outline btn-sm">Run check</button></div>
+            <div class="card card-pad"><h3 class="mono small">Debug JSON</h3><p class="muted small">Raw node dump.</p><button class="btn btn-ghost btn-sm">View / copy</button></div>
+            <div class="card card-pad" style="border-color:var(--danger)"><h3 style="color:var(--danger)">Remove device</h3><p class="muted small">Exclude / remove failed node.</p><button class="btn btn-danger btn-sm">Remove…</button></div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <a href="dashboard.html"><span class="ico">🏠</span>Home</a>
+  <a class="active" href="devices.html"><span class="ico">🔌</span>Devices</a>
+  <a href="add-device.html"><span class="ico">➕</span>Add</a>
+  <a href="network.html"><span class="ico">🕸</span>Network</a>
+  <a href="settings.html"><span class="ico">⚙</span>Settings</a>
+</nav>
+<script src="assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Add a device · Z-Wave UI</title>
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="logo">Z</div><b>Z-Wave</b></div>
+    <a class="nav-item" href="dashboard.html"><span class="ico">🏠</span> Dashboard</a>
+    <a class="nav-item" href="devices.html"><span class="ico">🔌</span> Devices</a>
+    <a class="nav-item active" href="add-device.html"><span class="ico">➕</span> Add device</a>
+    <a class="nav-item" href="network.html"><span class="ico">🕸</span> Network</a>
+    <a class="nav-item" href="settings.html"><span class="ico">⚙</span> Settings</a>
+    <div class="spacer"></div>
+    <div class="card card-pad">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--s-3)">
+        <div><div style="font-weight:600;font-size:.85rem">Advanced mode</div><div class="muted small">Show power-user tools</div></div>
+        <label class="switch"><input type="checkbox" data-adv-switch onchange="toggleAdvanced()"><span class="track"></span></label>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn menu-btn" onclick="toggleMenu()">☰</button>
+      <span class="page-title">Add a device</span>
+      <div class="spacer"></div>
+      <button class="icon-btn" onclick="toggleTheme()"><span data-theme-icon>☾</span></button>
+      <button class="icon-btn">👤</button>
+    </header>
+
+    <main class="content" style="max-width:760px">
+
+      <!-- HERO: Smart Start QR -->
+      <div class="card" style="overflow:hidden">
+        <div style="background:linear-gradient(135deg,var(--color-primary),var(--color-primary-strong));color:#fff;padding:var(--s-6)">
+          <h1 style="color:#fff;margin:0 0 var(--s-2)">Scan to add — the easy way</h1>
+          <p style="margin:0;opacity:.92">Most modern Z-Wave devices have a <b>Smart Start QR code</b> on the box or device. Scan it and the device joins securely on its own when you power it up — no timing, no codes to type.</p>
+        </div>
+        <div class="card-pad" style="display:grid;grid-template-columns:200px 1fr;gap:var(--s-5);align-items:center">
+          <div style="aspect-ratio:1;background:var(--color-surface-2);border:2px dashed var(--color-border);border-radius:var(--r-lg);display:grid;place-items:center;text-align:center;color:var(--color-text-muted)">
+            <div><div style="font-size:3rem">▣</div><div class="small">Camera preview</div></div>
+          </div>
+          <div>
+            <button class="btn btn-primary btn-block" style="margin-bottom:var(--s-3)">📷 Scan QR code with camera</button>
+            <button class="btn btn-outline btn-block" style="margin-bottom:var(--s-3)">🖼 Upload a photo of the code</button>
+            <button class="btn btn-ghost btn-block">⌨ Paste the code text</button>
+            <p class="muted small" style="margin-top:var(--s-3)">We'll add it to your provisioning list. Power the device on near the hub and it appears automatically — fully secured (S2).</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Manual / classic (revealed) -->
+      <div class="reveal-toggle" style="margin-top:var(--s-5);font-size:.95rem" onclick="toggleReveal(this,'classic')"><span data-caret>⌄</span> No QR code? Add a device manually</div>
+      <div id="classic" class="reveal-body card card-pad" style="margin-top:var(--s-3)">
+        <div class="steps">
+          <div class="step done"><span class="num">1</span> Mode</div>
+          <div class="step active"><span class="num">2</span> Security</div>
+          <div class="step"><span class="num">3</span> Pairing</div>
+          <div class="step"><span class="num">4</span> Name</div>
+        </div>
+        <div class="field">
+          <label>Inclusion mode</label>
+          <select class="input"><option>Secure (recommended)</option><option>Default</option><option>Insecure</option></select>
+        </div>
+        <div data-adv-only>
+          <label class="small muted">Security classes <span class="help" title="Which S2 security levels to grant. Higher classes are for locks and garage doors.">?</span></label>
+          <div style="display:flex;flex-direction:column;gap:6px;margin:var(--s-2) 0">
+            <label class="small"><input type="checkbox" checked> S2 Access Control</label>
+            <label class="small"><input type="checkbox" checked> S2 Authenticated</label>
+            <label class="small"><input type="checkbox" checked> S2 Unauthenticated</label>
+            <label class="small"><input type="checkbox"> S0 Legacy</label>
+          </div>
+          <div class="field"><label>Protocol</label><select class="input"><option>Z-Wave</option><option>Z-Wave Long Range</option></select></div>
+        </div>
+        <button class="btn btn-primary">Start pairing</button>
+        <p class="muted small">Then follow your device's instructions (usually press its button 3×). A DSK PIN prompt may appear for secure devices.</p>
+      </div>
+
+      <!-- Other actions -->
+      <div class="grid-cards" style="margin-top:var(--s-5);grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
+        <div class="card card-pad"><h3>Remove a device</h3><p class="muted small">Start exclusion to unpair a device.</p><button class="btn btn-outline btn-sm">Start exclusion</button></div>
+        <div class="card card-pad" data-adv-only><h3>Replace failed node <span class="badge-expert">Expert</span></h3><p class="muted small">Swap a dead device, keeping its node ID.</p><button class="btn btn-outline btn-sm">Replace…</button></div>
+      </div>
+
+      <!-- Provisioning entries (Smart Start table) -->
+      <div class="section-title" data-adv-only><h2>Provisioning entries</h2><span class="count">Smart Start</span></div>
+      <div class="card" data-adv-only style="overflow:auto">
+        <table class="table responsive">
+          <thead><tr><th>Name</th><th>Location</th><th>Protocol</th><th>Security</th><th>Status</th><th>Active</th></tr></thead>
+          <tbody>
+            <tr><td data-label="Name">Bedroom Switch</td><td data-label="Location">Bedroom</td><td data-label="Protocol">Z-Wave</td><td data-label="Security"><span class="pill">S2 Auth</span></td><td data-label="Status"><span class="pill warn">Pending</span></td><td data-label="Active"><label class="switch"><input type="checkbox" checked><span class="track"></span></label></td></tr>
+            <tr><td data-label="Name">Garage Door</td><td data-label="Location">Garage</td><td data-label="Protocol">Z-Wave LR</td><td data-label="Security"><span class="pill">S2 AC</span></td><td data-label="Status"><span class="pill ok">Included · Node 18</span></td><td data-label="Active"><label class="switch"><input type="checkbox" checked><span class="track"></span></label></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <a href="dashboard.html"><span class="ico">🏠</span>Home</a>
+  <a href="devices.html"><span class="ico">🔌</span>Devices</a>
+  <a class="active"><span class="ico">➕</span>Add</a>
+  <a href="network.html"><span class="ico">🕸</span>Network</a>
+  <a href="settings.html"><span class="ico">⚙</span>Settings</a>
+</nav>
+<script src="assets/app.js"></script>
+</body>
+</html>

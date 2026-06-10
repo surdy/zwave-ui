@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dashboard · Z-Wave UI</title>
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- Sidebar (desktop) -->
+  <aside class="sidebar">
+    <div class="brand"><div class="logo">Z</div><b>Z-Wave</b></div>
+    <a class="nav-item active"><span class="ico">🏠</span> Dashboard</a>
+    <a class="nav-item" href="devices.html"><span class="ico">🔌</span> Devices</a>
+    <a class="nav-item" href="add-device.html"><span class="ico">➕</span> Add device</a>
+    <a class="nav-item" href="network.html"><span class="ico">🕸</span> Network</a>
+    <a class="nav-item" href="settings.html"><span class="ico">⚙</span> Settings</a>
+    <div class="spacer"></div>
+    <a class="nav-item" data-adv-only><span class="ico">🎬</span> Scenes <span class="badge-adv">Adv</span></a>
+    <a class="nav-item" data-adv-only><span class="ico">📋</span> Templates <span class="badge-adv">Adv</span></a>
+    <div class="card card-pad" style="margin-top:var(--s-3)">
+      <div class="row" style="display:flex;align-items:center;justify-content:space-between;gap:var(--s-3)">
+        <div><div style="font-weight:600;font-size:.85rem">Advanced mode</div><div class="muted small">Show power-user tools</div></div>
+        <label class="switch"><input type="checkbox" data-adv-switch onchange="toggleAdvanced()"><span class="track"></span></label>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn menu-btn" onclick="toggleMenu()">☰</button>
+      <span class="page-title only-mobile">Dashboard</span>
+      <div class="search only-desktop">🔍 <input placeholder="Search devices, settings, actions…"></div>
+      <div class="spacer"></div>
+      <span class="pill ok only-desktop"><span class="dot"></span> 23 online</span>
+      <button class="icon-btn" title="Toggle theme" onclick="toggleTheme()"><span data-theme-icon>☾</span></button>
+      <button class="icon-btn" title="Account">👤</button>
+    </header>
+
+    <main class="content">
+
+      <!-- Needs attention -->
+      <div class="banner danger" style="margin-bottom:var(--s-3)">
+        ⚠ <b>Front Door Lock</b> isn't responding.
+        <a class="btn btn-sm btn-danger" href="device-detail.html">Diagnose</a>
+      </div>
+      <div class="banner warn">
+        🔋 2 devices low on battery · 🆕 Firmware available for Living Room Dimmer
+        <a class="btn btn-sm btn-outline" href="devices.html">Review</a>
+      </div>
+
+      <!-- Favorites -->
+      <div class="section-title"><h2>★ Favorites</h2></div>
+      <div class="grid-cards">
+
+        <div class="device on" onclick="go('device-detail.html')">
+          <div class="row"><div class="glyph">💡</div><span class="fav active" onclick="toggleFav(event,this)">★</span></div>
+          <div><div class="name">Living Room Lights</div><div class="loc">Living Room</div></div>
+          <div class="state"><span class="dot dot-ok"></span> On · 60%</div>
+          <div class="control" onclick="stop(event)"><input class="slider" type="range" min="0" max="100" value="60"></div>
+        </div>
+
+        <div class="device" onclick="go('device-detail.html')">
+          <div class="row"><div class="glyph">🔌</div><span class="fav active" onclick="toggleFav(event,this)">★</span></div>
+          <div><div class="name">Coffee Machine</div><div class="loc">Kitchen</div></div>
+          <div class="state"><span class="dot dot-idle"></span> Off</div>
+          <div class="control" onclick="stop(event)"><label class="switch"><input type="checkbox"><span class="track"></span></label></div>
+        </div>
+
+        <div class="device" onclick="go('device-detail.html')">
+          <div class="row"><div class="glyph">🌡️</div><span class="fav active" onclick="toggleFav(event,this)">★</span></div>
+          <div><div class="name">Hallway Thermostat</div><div class="loc">Hallway</div></div>
+          <div class="state"><span class="dot dot-ok"></span> 72°F · Heat</div>
+        </div>
+
+        <div class="device dead" onclick="go('device-detail.html')">
+          <div class="row"><div class="glyph">🔒</div><span class="fav active" onclick="toggleFav(event,this)">★</span></div>
+          <div><div class="name">Front Door Lock</div><div class="loc">Entryway</div></div>
+          <div class="state"><span class="dot dot-danger"></span> Not responding</div>
+        </div>
+      </div>
+
+      <!-- Rooms -->
+      <div class="section-title"><h2>Living Room</h2><span class="count">· 4 devices</span></div>
+      <div class="grid-cards">
+        <div class="device on" onclick="go('device-detail.html')">
+          <div class="row"><div class="glyph">💡</div><span class="fav" onclick="toggleFav(event,this)">☆</span></div>
+          <div><div class="name">Floor Lamp</div><div class="loc">Living Room</div></div>
+          <div class="state"><span class="dot dot-ok"></span> On · 80%</div>
+          <div class="control" onclick="stop(event)"><input class="slider" type="range" min="0" max="100" value="80"></div>
+        </div>
+        <div class="device" onclick="go('device-detail.html')">
+          <div class="row"><div class="glyph">📺</div><span class="fav" onclick="toggleFav(event,this)">☆</span></div>
+          <div><div class="name">TV Plug</div><div class="loc">Living Room</div></div>
+          <div class="state"><span class="dot dot-idle"></span> Off · 0 W</div>
+          <div class="control" onclick="stop(event)"><label class="switch"><input type="checkbox"><span class="track"></span></label></div>
+        </div>
+        <div class="device" onclick="go('device-detail.html')">
+          <div class="row"><div class="glyph">🪟</div><span class="fav" onclick="toggleFav(event,this)">☆</span></div>
+          <div><div class="name">Window Shade</div><div class="loc">Living Room</div></div>
+          <div class="state"><span class="dot dot-ok"></span> Open · 100%</div>
+          <div class="control" onclick="stop(event)"><input class="slider" type="range" min="0" max="100" value="100"></div>
+        </div>
+        <div class="device" onclick="go('device-detail.html')">
+          <div class="row"><div class="glyph">🚶</div><span class="fav" onclick="toggleFav(event,this)">☆</span></div>
+          <div><div class="name">Motion Sensor</div><div class="loc">Living Room</div></div>
+          <div class="state"><span class="dot dot-warn"></span> Idle · 🔋 15%</div>
+        </div>
+      </div>
+
+      <div class="section-title"><h2>Kitchen</h2><span class="count">· 3 devices</span></div>
+      <div class="grid-cards">
+        <div class="device on" onclick="go('device-detail.html')">
+          <div class="row"><div class="glyph">💡</div><span class="fav" onclick="toggleFav(event,this)">☆</span></div>
+          <div><div class="name">Ceiling Lights</div><div class="loc">Kitchen</div></div>
+          <div class="state"><span class="dot dot-ok"></span> On · 100%</div>
+          <div class="control" onclick="stop(event)"><input class="slider" type="range" min="0" max="100" value="100"></div>
+        </div>
+        <div class="device" onclick="go('device-detail.html')">
+          <div class="row"><div class="glyph">🚪</div><span class="fav" onclick="toggleFav(event,this)">☆</span></div>
+          <div><div class="name">Back Door Sensor</div><div class="loc">Kitchen</div></div>
+          <div class="state"><span class="dot dot-ok"></span> Closed · Secure 🛡</div>
+        </div>
+        <div class="device" onclick="go('device-detail.html')">
+          <div class="row"><div class="glyph">💧</div><span class="fav" onclick="toggleFav(event,this)">☆</span></div>
+          <div><div class="name">Leak Sensor</div><div class="loc">Kitchen · under sink</div></div>
+          <div class="state"><span class="dot dot-ok"></span> Dry · 🔋 90%</div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Bottom nav (mobile) -->
+<nav class="bottom-nav">
+  <a class="active"><span class="ico">🏠</span>Home</a>
+  <a href="devices.html"><span class="ico">🔌</span>Devices</a>
+  <a href="add-device.html"><span class="ico">➕</span>Add</a>
+  <a href="network.html"><span class="ico">🕸</span>Network</a>
+  <a href="settings.html"><span class="ico">⚙</span>Settings</a>
+</nav>
+
+<script src="assets/app.js"></script>
+</body>
+</html>

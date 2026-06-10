@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Network · Z-Wave UI</title>
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="logo">Z</div><b>Z-Wave</b></div>
+    <a class="nav-item" href="dashboard.html"><span class="ico">🏠</span> Dashboard</a>
+    <a class="nav-item" href="devices.html"><span class="ico">🔌</span> Devices</a>
+    <a class="nav-item" href="add-device.html"><span class="ico">➕</span> Add device</a>
+    <a class="nav-item active" href="network.html"><span class="ico">🕸</span> Network</a>
+    <a class="nav-item" href="settings.html"><span class="ico">⚙</span> Settings</a>
+    <div class="spacer"></div>
+    <div class="card card-pad">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--s-3)">
+        <div><div style="font-weight:600;font-size:.85rem">Advanced mode</div><div class="muted small">Show map & controller</div></div>
+        <label class="switch"><input type="checkbox" data-adv-switch onchange="toggleAdvanced()"><span class="track"></span></label>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn menu-btn" onclick="toggleMenu()">☰</button>
+      <span class="page-title">Network</span>
+      <div class="spacer"></div>
+      <button class="icon-btn" onclick="toggleTheme()"><span data-theme-icon>☾</span></button>
+      <button class="icon-btn">👤</button>
+    </header>
+
+    <main class="content">
+
+      <!-- Health summary (Tier 2, mobile friendly) -->
+      <h1>Network health</h1>
+      <div class="stats">
+        <div class="card stat"><div class="n" style="color:var(--ok)">23</div><div class="l">Online</div></div>
+        <div class="card stat"><div class="n" style="color:var(--warn)">1</div><div class="l">Asleep / weak</div></div>
+        <div class="card stat"><div class="n" style="color:var(--danger)">1</div><div class="l">Not responding</div></div>
+        <div class="card stat"><div class="n">100 kbps</div><div class="l">Avg link speed</div></div>
+        <div class="card stat"><div class="n">-92 dBm</div><div class="l">Background noise</div></div>
+      </div>
+
+      <div class="banner warn" style="margin-top:var(--s-4)">
+        ⚠ <b>1 weak link</b> detected: Front Door Lock → Controller (3 hops, low RSSI).
+        <button class="btn btn-sm btn-outline">Rebuild routes</button>
+      </div>
+
+      <!-- Weak links list -->
+      <div class="section-title"><h2>Links needing attention</h2></div>
+      <div class="card">
+        <div class="list" style="padding:0 var(--s-4)">
+          <div class="item"><div class="glyph">🔒</div><div class="grow"><div style="font-weight:600">Front Door Lock</div><div class="muted small">3 hops · ACK RSSI -88 dBm · 2 failed pings</div></div><span class="pill danger">Poor</span><button class="btn btn-ghost btn-sm">Diagnose</button></div>
+          <div class="item"><div class="glyph">🚶</div><div class="grow"><div style="font-weight:600">Garage Motion</div><div class="muted small">2 hops · ACK RSSI -74 dBm</div></div><span class="pill warn">Fair</span><button class="btn btn-ghost btn-sm">Diagnose</button></div>
+        </div>
+      </div>
+
+      <!-- Map (desktop / advanced) -->
+      <div class="section-title" data-adv-only><h2>Network map</h2><span class="badge-adv">Advanced</span>
+        <div style="flex:1"></div>
+        <label class="small muted"><input type="checkbox" checked> Priority routes</label>
+        <label class="small muted"><input type="checkbox"> Return routes</label>
+      </div>
+      <div class="card card-pad only-desktop" data-adv-only>
+        <div class="mesh">
+          <!-- edges -->
+          <svg style="position:absolute;inset:0;width:100%;height:100%" preserveAspectRatio="none">
+            <line x1="50%" y1="50%" x2="22%" y2="28%" stroke="#16a34a" stroke-width="3"/>
+            <line x1="50%" y1="50%" x2="78%" y2="26%" stroke="#16a34a" stroke-width="3"/>
+            <line x1="50%" y1="50%" x2="26%" y2="76%" stroke="#16a34a" stroke-width="3"/>
+            <line x1="26%" y1="76%" x2="14%" y2="92%" stroke="#d97706" stroke-width="2" stroke-dasharray="6 5"/>
+            <line x1="78%" y1="26%" x2="86%" y2="60%" stroke="#dc2626" stroke-width="2" stroke-dasharray="4 6"/>
+          </svg>
+          <div class="node ctrl" style="left:50%;top:50%">🛜<small>Controller</small></div>
+          <div class="node" style="left:22%;top:28%">💡<small>Dimmer · 1 hop</small></div>
+          <div class="node" style="left:78%;top:26%">🔌<small>Plug · 1 hop</small></div>
+          <div class="node" style="left:26%;top:76%">💡<small>Kitchen · 1 hop</small></div>
+          <div class="node weak" style="left:14%;top:92%">🚶<small>Garage · 2 hops</small></div>
+          <div class="node dead" style="left:86%;top:60%">🔒<small>Lock · FAILED</small></div>
+        </div>
+        <div style="display:flex;gap:var(--s-4);flex-wrap:wrap;margin-top:var(--s-3)" class="small muted">
+          <span>● <span style="color:var(--color-primary)">Controller</span></span>
+          <span>━ <span style="color:var(--ok)">Strong route (100 kbps)</span></span>
+          <span>┄ <span style="color:var(--warn)">Last working route</span></span>
+          <span>┄ <span style="color:var(--danger)">Failed route</span></span>
+        </div>
+      </div>
+      <div class="banner info only-mobile" data-adv-only style="margin-top:var(--s-3)">🗺 The full interactive map is available on a larger screen. The health summary above covers the essentials on mobile.</div>
+
+      <!-- Controller + diagnostics (Tier 3) -->
+      <div class="section-title" data-adv-only><h2>Controller &amp; tools</h2></div>
+      <div class="grid-cards" data-adv-only style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
+        <div class="card card-pad"><h3>Rebuild all routes</h3><p class="muted small">Recompute the whole mesh.</p><button class="btn btn-outline btn-sm">Rebuild network</button></div>
+        <div class="card card-pad"><h3>Controller firmware</h3><p class="muted small">OTW update · SDK 7.21</p><button class="btn btn-outline btn-sm">Check</button></div>
+        <div class="card card-pad"><h3>Background RSSI</h3><p class="muted small">Channels 0–3 noise floor.</p><button class="btn btn-outline btn-sm">View chart</button></div>
+        <div class="card card-pad"><h3>Zniffer <span class="badge-expert">Expert</span></h3><p class="muted small">Capture raw Z-Wave traffic.</p><button class="btn btn-ghost btn-sm">Open</button></div>
+        <div class="card card-pad"><h3>Debug logs <span class="badge-expert">Expert</span></h3><p class="muted small">Live driver log stream.</p><button class="btn btn-ghost btn-sm">Open</button></div>
+        <div class="card card-pad" style="border-color:var(--danger)"><h3 style="color:var(--danger)">Reset controller <span class="badge-expert">Expert</span></h3><p class="muted small">Soft / hard reset.</p><button class="btn btn-danger btn-sm">Reset…</button></div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <a href="dashboard.html"><span class="ico">🏠</span>Home</a>
+  <a href="devices.html"><span class="ico">🔌</span>Devices</a>
+  <a href="add-device.html"><span class="ico">➕</span>Add</a>
+  <a class="active"><span class="ico">🕸</span>Network</a>
+  <a href="settings.html"><span class="ico">⚙</span>Settings</a>
+</nav>
+<script src="assets/app.js"></script>
+</body>
+</html>

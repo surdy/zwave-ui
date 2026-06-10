@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Z-Wave UI Rework — Mockups</title>
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/app.css">
+<style>
+  .wrap { max-width:1100px; margin:0 auto; padding:var(--s-6) var(--s-4) var(--s-7); }
+  .hero { text-align:center; padding:var(--s-6) 0 var(--s-5); }
+  .hero h1 { font-size:clamp(1.8rem,4vw,2.6rem); margin-bottom:var(--s-3); }
+  .hero p { color:var(--color-text-muted); max-width:620px; margin:0 auto var(--s-4); font-size:1.05rem; }
+  .chips { display:flex; gap:var(--s-2); flex-wrap:wrap; justify-content:center; }
+  .screens { display:grid; gap:var(--s-5); grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); margin-top:var(--s-6); }
+  .screen { overflow:hidden; display:flex; flex-direction:column; }
+  .frame { aspect-ratio:16/10; border:0; width:100%; background:var(--color-surface-2); }
+  .screen .cap { padding:var(--s-4); }
+  .screen .cap h3 { margin:0 0 6px; }
+  .demo-bar { display:flex; gap:var(--s-2); align-items:center; justify-content:center; margin-top:var(--s-4); }
+  .phone-row { display:flex; gap:var(--s-5); flex-wrap:wrap; justify-content:center; margin-top:var(--s-5); }
+  .phone { width:300px; }
+  .phone .device-frame { width:300px; height:600px; border:10px solid #0f172a; border-radius:36px; overflow:hidden; box-shadow:var(--shadow-2); background:#000; }
+  .phone iframe { width:380px; height:760px; border:0; transform:scale(.789); transform-origin:top left; }
+  .phone p { text-align:center; color:var(--color-text-muted); margin-top:var(--s-3); }
+  .legend { display:flex; gap:var(--s-4); flex-wrap:wrap; justify-content:center; margin-top:var(--s-4); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="brand" style="justify-content:center"><div class="logo">Z</div><b style="font-size:1.2rem">Z-Wave UI Rework</b></div>
+    <h1>A modern, mobile-first Z-Wave control panel</h1>
+    <p>Interactive mockups for a reworked Z-Wave JS UI: <b>simple by default, powerful when needed</b>, full feature parity, same zwave-js backend. Click any screen to open it. Try resizing the window, the <b>Advanced</b> switch, and the theme toggle.</p>
+    <div class="demo-bar">
+      <button class="btn btn-outline" onclick="toggleTheme()">Theme <span data-theme-icon>☾</span></button>
+      <a class="btn btn-primary" href="dashboard.html">Open the app →</a>
+    </div>
+    <div class="legend small muted">
+      <span><span class="badge-adv">Adv</span> one disclosure away</span>
+      <span><span class="badge-expert">Expert</span> badged &amp; guarded</span>
+      <span>🟢 Tier&nbsp;1 default-visible</span>
+    </div>
+  </div>
+
+  <div class="screens">
+    <div class="card screen">
+      <iframe class="frame" src="onboarding.html" title="Onboarding"></iframe>
+      <div class="cap"><h3>① First-run onboarding</h3><p class="muted small">From zero to a working network in 4 steps — controller, region, secure keys. Replaces hunting through an 3,100-line settings page.</p><a class="btn btn-outline btn-sm" href="onboarding.html">Open</a></div>
+    </div>
+    <div class="card screen">
+      <iframe class="frame" src="dashboard.html" title="Dashboard"></iframe>
+      <div class="cap"><h3>② Dashboard</h3><p class="muted small">Room-first, status-colored device cards with one-tap control, a Favorites lane, and a "Needs attention" surface.</p><a class="btn btn-outline btn-sm" href="dashboard.html">Open</a></div>
+    </div>
+    <div class="card screen">
+      <iframe class="frame" src="devices.html" title="Devices"></iframe>
+      <div class="cap"><h3>③ Devices</h3><p class="muted small">All nodes grouped by room as cards; flip <b>Advanced</b> to reveal the full power-user table with columns &amp; filters.</p><a class="btn btn-outline btn-sm" href="devices.html">Open</a></div>
+    </div>
+    <div class="card screen">
+      <iframe class="frame" src="device-detail.html" title="Device detail"></iframe>
+      <div class="cap"><h3>④ Device detail</h3><p class="muted small">Glance→drill-down with tabs: Overview, Controls, Configuration (tooltipped params), Associations, Firmware, Activity, Advanced/Expert.</p><a class="btn btn-outline btn-sm" href="device-detail.html">Open</a></div>
+    </div>
+    <div class="card screen">
+      <iframe class="frame" src="add-device.html" title="Add device"></iframe>
+      <div class="cap"><h3>⑤ Add a device</h3><p class="muted small">QR Smart Start is the hero path; classic inclusion is a reveal. Secure-by-default, no jargon up front.</p><a class="btn btn-outline btn-sm" href="add-device.html">Open</a></div>
+    </div>
+    <div class="card screen">
+      <iframe class="frame" src="network.html" title="Network"></iframe>
+      <div class="cap"><h3>⑥ Network</h3><p class="muted small">A readable health summary + weak-link list for everyone; the full mesh map &amp; controller tools behind Advanced/Expert.</p><a class="btn btn-outline btn-sm" href="network.html">Open</a></div>
+    </div>
+    <div class="card screen">
+      <iframe class="frame" src="settings.html" title="Settings"></iframe>
+      <div class="cap"><h3>⑦ Settings</h3><p class="muted small">The monolith decomposed: a short <b>Setup</b> section on top, the rest organized, searchable, and progressively disclosed.</p><a class="btn btn-outline btn-sm" href="settings.html">Open</a></div>
+    </div>
+  </div>
+
+  <!-- Responsive proof: phone frames -->
+  <div class="section-title" style="justify-content:center;margin-top:var(--s-7)"><h2>Genuinely responsive — the same screens on a phone</h2></div>
+  <div class="phone-row">
+    <div class="phone"><div class="device-frame"><iframe src="dashboard.html"></iframe></div><p class="small">Dashboard · bottom nav, reflowed cards</p></div>
+    <div class="phone"><div class="device-frame"><iframe src="device-detail.html"></iframe></div><p class="small">Device detail · scrollable tabs</p></div>
+    <div class="phone"><div class="device-frame"><iframe src="add-device.html"></iframe></div><p class="small">Add device · QR-first</p></div>
+  </div>
+
+  <p class="center muted small" style="margin-top:var(--s-7)">
+    Mockups are static HTML/CSS/JS (no build step). See <a href="../03-ux-design/design-system.md">design-system.md</a> for the tokens behind them and
+    <a href="../01-feature-analysis/feature-catalog.md">feature-catalog.md</a> for parity coverage.
+  </p>
+</div>
+<script src="assets/app.js"></script>
+</body>
+</html>
