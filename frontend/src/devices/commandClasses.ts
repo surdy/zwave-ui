@@ -12,9 +12,13 @@ export const CommandClass = {
   Meter: 50, // 0x32
   Color: 51, // 0x33
   ThermostatSetpoint: 67, // 0x43
+  ThermostatMode: 64, // 0x40
+  ThermostatFanMode: 68, // 0x44
+  CentralScene: 91, // 0x5b
   DoorLock: 98, // 0x62
-  Notification: 113, // 0x71
   WindowCovering: 106, // 0x6a
+  BarrierOperator: 102, // 0x66
+  Notification: 113, // 0x71
   Battery: 128, // 0x80
 } as const
 
