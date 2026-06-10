@@ -147,6 +147,16 @@ The backend only permits these method names (from `allowedApis` in
 | `GET` | `/api/snippet` | driver-function snippets |
 | `GET`/`POST` | `/api/debug/*` | debug log status/control |
 
+## 5b. Gotcha: SPA history-fallback & the `Accept` header
+
+The backend serves the SPA with `connect-history-api-fallback`. A `GET` whose
+`Accept` header matches `text/html` (which includes `*/*`) and has no file
+extension is rewritten to the SPA index. So REST calls **must** send
+`Accept: application/json` or they may be rewritten to `index.html` and appear as
+404/HTML. The API layer should set this header on every `fetch`. (socket.io is
+unaffected.) Verified locally: `curl -H 'Accept: application/json'
+/api/auth-enabled` → `{"success":true,"data":false}`.
+
 ## 6. Data shapes (frontend types)
 
 Model these in `frontend/src/api/types.ts`. The richest references:
