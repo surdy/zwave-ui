@@ -1,0 +1,6 @@
+export * from './types'
+export * from './events'
+export * from './rest'
+export * from './auth'
+export { ZwaveSocket, zwaveSocket } from './socket'
+export type { ConnectOptions } from './socket'
