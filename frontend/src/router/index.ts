@@ -28,6 +28,12 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Devices' },
       },
       {
+        path: 'devices/:id',
+        name: 'device-detail',
+        component: () => import('@/views/DeviceDetailView.vue'),
+        meta: { title: 'Device' },
+      },
+      {
         path: 'add',
         name: 'add',
         component: () => import('@/views/AddView.vue'),
