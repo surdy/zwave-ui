@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, reactive, ref, watch } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import type { ValueId, ZwaveNode } from '@/api'
@@ -18,6 +18,20 @@ import BaseSwitch from '@/components/base/BaseSwitch.vue'
 import BaseTextField from '@/components/base/BaseTextField.vue'
 import EmptyState from '@/components/base/EmptyState.vue'
 import StatusDot from '@/components/base/StatusDot.vue'
+
+// Advanced/Expert tabs are lazy-loaded; each is owned by its own issue (#11–#14).
+const ConfigurationTab = defineAsyncComponent(
+  () => import('@/components/devices/detail/ConfigurationTab.vue'),
+)
+const AssociationsTab = defineAsyncComponent(
+  () => import('@/components/devices/detail/AssociationsTab.vue'),
+)
+const FirmwareTab = defineAsyncComponent(
+  () => import('@/components/devices/detail/FirmwareTab.vue'),
+)
+const ActivityTab = defineAsyncComponent(
+  () => import('@/components/devices/detail/ActivityTab.vue'),
+)
 
 const route = useRoute()
 const router = useRouter()
@@ -396,15 +410,10 @@ async function poll(valueId: ValueId) {
       </AdvancedOnly>
     </section>
 
-    <section v-else class="tabpanel">
-      <article class="card coming-soon">
-        <BaseBadge :variant="DEVICE_DETAIL_TABS.find((tab) => tab.id === activeTab)?.tier === 'expert' ? 'expert' : 'advanced'">
-          {{ DEVICE_DETAIL_TABS.find((tab) => tab.id === activeTab)?.tier }}
-        </BaseBadge>
-        <h2>{{ DEVICE_DETAIL_TABS.find((tab) => tab.id === activeTab)?.label }} coming soon</h2>
-        <p class="muted">This tab is visible only in advanced mode and will be implemented in a later issue.</p>
-      </article>
-    </section>
+    <ConfigurationTab v-else-if="activeTab === 'configuration'" :node="node" />
+    <AssociationsTab v-else-if="activeTab === 'associations'" :node="node" />
+    <FirmwareTab v-else-if="activeTab === 'firmware'" :node="node" />
+    <ActivityTab v-else-if="activeTab === 'activity'" :node="node" />
   </section>
 
   <EmptyState v-else-if="loading" icon="⏳" title="Loading device" description="Waiting for the network snapshot from the Z-Wave backend." />
