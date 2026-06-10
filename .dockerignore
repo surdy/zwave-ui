@@ -1,0 +1,38 @@
+.git
+.gitignore
+.github
+.DS_Store
+.idea
+.vscode
+
+# Local dependencies and build output
+node_modules
+**/node_modules
+dist
+**/dist
+dist-ssr
+coverage
+**/coverage
+.cache
+**/.cache
+.vite
+**/.vite
+*.tsbuildinfo
+
+# Local configuration and logs
+.env
+.env.*
+*.local
+*.log
+logs
+**/logs
+
+# Documentation and reference clones are not needed to build the image
+docs
+zwave-js-ui
+*.md
+**/*.md
+LICENSE
+
+# Compose examples are runtime docs, not build inputs
+docker
