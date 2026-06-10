@@ -113,12 +113,12 @@ onMounted(async () => {
 }
 
 .home__status dd[data-status='connected'] {
-  color: var(--color-success, #16a34a);
+  color: var(--ok);
 }
 
 .home__status dd[data-status='error'],
 .home__status dd[data-status='disconnected'] {
-  color: var(--color-danger, #dc2626);
+  color: var(--danger);
 }
 
 .home__nodes {
@@ -135,7 +135,7 @@ onMounted(async () => {
   align-items: center;
   gap: var(--s-2);
   padding: var(--s-2) var(--s-3);
-  background: var(--color-bg, #f8fafc);
+  background: var(--color-surface-2);
   border: 1px solid var(--color-border);
   border-radius: var(--r-md);
 }
