@@ -390,8 +390,8 @@ onMounted(loadSystem)
         </div>
         <div class="link-list">
           <RouterLink :to="{ name: 'settings-backup' }">Backups</RouterLink>
-          <RouterLink :to="{ name: 'settings-system' }">Debug log (coming soon)</RouterLink>
-          <RouterLink :to="{ name: 'settings-system' }">Zniffer diagnostics (coming soon)</RouterLink>
+          <RouterLink :to="{ name: 'diagnostics-logs' }">Debug log</RouterLink>
+          <RouterLink :to="{ name: 'diagnostics-zniffer' }">Zniffer diagnostics</RouterLink>
         </div>
       </div>
     </BaseCard>

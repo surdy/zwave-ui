@@ -61,6 +61,30 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Controller maintenance' },
       },
       {
+        path: 'network/logs',
+        name: 'diagnostics-logs',
+        component: () => import('@/views/DebugLogView.vue'),
+        meta: { title: 'Debug log' },
+      },
+      {
+        path: 'network/zniffer',
+        name: 'diagnostics-zniffer',
+        component: () => import('@/views/ZnifferView.vue'),
+        meta: { title: 'Zniffer' },
+      },
+      {
+        path: 'scenes',
+        name: 'scenes',
+        component: () => import('@/views/ScenesView.vue'),
+        meta: { title: 'Scenes' },
+      },
+      {
+        path: 'templates',
+        name: 'config-templates',
+        component: () => import('@/views/ConfigTemplatesView.vue'),
+        meta: { title: 'Configuration templates' },
+      },
+      {
         path: 'settings',
         component: () => import('@/views/SettingsView.vue'),
         meta: { title: 'Settings' },

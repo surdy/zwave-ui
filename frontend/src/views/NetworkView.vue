@@ -276,9 +276,21 @@ onUnmounted(() => {
         <h1>Health overview & mesh map</h1>
         <p>Watch node health, neighbor topology, diagnostics progress, and live statistics.</p>
       </div>
-      <RouterLink :to="{ name: 'controller-maintenance' }">
-        <BaseButton variant="secondary">Controller maintenance</BaseButton>
-      </RouterLink>
+      <div class="network-view__hero-actions">
+        <RouterLink :to="{ name: 'controller-maintenance' }">
+          <BaseButton variant="secondary">Controller maintenance</BaseButton>
+        </RouterLink>
+        <AdvancedOnly>
+          <RouterLink :to="{ name: 'diagnostics-logs' }">
+            <BaseButton variant="secondary">Debug log</BaseButton>
+          </RouterLink>
+        </AdvancedOnly>
+        <AdvancedOnly>
+          <RouterLink :to="{ name: 'diagnostics-zniffer' }">
+            <BaseButton variant="secondary">Zniffer</BaseButton>
+          </RouterLink>
+        </AdvancedOnly>
+      </div>
     </header>
 
     <p v-if="error" class="network-view__error" role="alert">{{ error }}</p>
@@ -391,6 +403,12 @@ onUnmounted(() => {
 .network-section__header p {
   margin: var(--s-2) 0 0;
   color: var(--color-text-muted);
+}
+.network-view__hero-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  flex-wrap: wrap;
 }
 .eyebrow {
   margin: 0 0 var(--s-1) !important;
