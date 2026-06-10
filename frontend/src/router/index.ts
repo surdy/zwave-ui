@@ -8,6 +8,14 @@ const routes: RouteRecordRaw[] = [
   },
 ]
 
+if (import.meta.env.DEV) {
+  routes.push({
+    path: '/_components',
+    name: 'kitchen-sink',
+    component: () => import('../views/KitchenSinkView.vue'),
+  })
+}
+
 const router = createRouter({
   history: createWebHistory(),
   routes,
