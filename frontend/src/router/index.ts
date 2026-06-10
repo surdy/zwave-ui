@@ -1,6 +1,15 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { fetchAuthEnabled, getStoredToken, isTokenValid } from '@/api'
+import { landingRouteName, loadPreferences } from '@/settings/preferences'
 import { resolveAuthNavigation } from './guard'
+
+function defaultLandingRoute() {
+  try {
+    return { name: landingRouteName(loadPreferences(localStorage).landingScreen) }
+  } catch {
+    return { name: 'dashboard' }
+  }
+}
 
 const routes: RouteRecordRaw[] = [
   {
@@ -14,7 +23,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/components/layout/AppShell.vue'),
     meta: { requiresAuth: true },
     children: [
-      { path: '', redirect: { name: 'dashboard' } },
+      { path: '', redirect: defaultLandingRoute },
       {
         path: 'dashboard',
         name: 'dashboard',
@@ -53,9 +62,41 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'settings',
-        name: 'settings',
         component: () => import('@/views/SettingsView.vue'),
         meta: { title: 'Settings' },
+        children: [
+          { path: '', redirect: { name: 'settings-general' } },
+          {
+            path: 'general',
+            name: 'settings-general',
+            component: () => import('@/views/settings/GeneralSettings.vue'),
+            meta: { title: 'General' },
+          },
+          {
+            path: 'zwave',
+            name: 'settings-zwave',
+            component: () => import('@/views/settings/ZwaveSettings.vue'),
+            meta: { title: 'Z-Wave' },
+          },
+          {
+            path: 'integrations',
+            name: 'settings-integrations',
+            component: () => import('@/views/settings/IntegrationsSettings.vue'),
+            meta: { title: 'Integrations' },
+          },
+          {
+            path: 'backup',
+            name: 'settings-backup',
+            component: () => import('@/views/settings/BackupSettings.vue'),
+            meta: { title: 'Backup' },
+          },
+          {
+            path: 'system',
+            name: 'settings-system',
+            component: () => import('@/views/settings/SystemSettings.vue'),
+            meta: { title: 'System' },
+          },
+        ],
       },
     ],
   },
