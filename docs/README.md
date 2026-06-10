@@ -24,9 +24,13 @@ docs/
 │   ├── information-architecture.md  ← 12 routes → 5 task areas
 │   ├── design-system.md        ← tokens, color, type, components
 │   └── user-flows.md           ← 5 key flows
-└── 04-mockups/                 Interactive responsive HTML mockups
-    ├── index.html              ← start here
-    └── dashboard / devices / device-detail / add-device / network / settings / onboarding
+├── 04-mockups/                 Interactive responsive HTML mockups
+│   ├── index.html              ← start here
+│   └── dashboard / devices / device-detail / add-device / network / settings / onboarding
+└── 05-implementation/          How the real app is built (for contributors)
+    ├── architecture.md         ← reuse-backend / replace-frontend, tech stack, container
+    ├── backend-api.md          ← authoritative socket.io + REST + ZWAVE_API contract
+    └── agent-guide.md          ← dev/test loop, conventions, definition of done
 ```
 
 (The cloned upstream repo lives alongside in `../zwave-js-ui/` as the analysis reference.)
@@ -57,7 +61,12 @@ The existing app exposes ~82 capabilities, of which **only ~27% are everyday** �
 | Same backend | Pure frontend rework against existing socket.io/REST APIs of `@zwave-js/server` |
 
 ## 📌 Status & next steps
-This deliverable is **research + design + mockups**. Natural follow-ons:
-1. Validate the IA/flows with real users (residents + installers).
-2. Build a thin vertical slice (Dashboard + Device detail) against the live `@zwave-js/server` API to prove parity.
-3. Choose the implementation stack (e.g., keep Vue 3 + Vuetify, or move to a lighter component layer) and port screen-by-screen, checking off the feature catalog.
+Research + design + mockups are **complete**. The project is now in
+**implementation**: a new Vue 3 + Vite + TypeScript frontend built against the
+existing zwave-js-ui backend, shipped as a drop-in container image.
+
+- **How it's built:** [05-implementation/architecture.md](docs/05-implementation/architecture.md)
+- **Backend API contract:** [05-implementation/backend-api.md](docs/05-implementation/backend-api.md)
+- **Contributor guide (dev/test loop, conventions):** [05-implementation/agent-guide.md](docs/05-implementation/agent-guide.md)
+- **Live progress:** [GitHub Issues](https://github.com/surdy/zwave-ui/issues) (grouped by milestones M1–M6)
+
