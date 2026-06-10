@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { getStoredToken, isTokenValid, setStoredToken } from '../auth'
+import { getStoredToken, isTokenValid, setSessionToken, setStoredToken } from '../auth'
 
 function makeJwt(payload: Record<string, unknown>): string {
   const part = (obj: unknown) => btoa(JSON.stringify(obj)).replace(/=+$/, '')
@@ -15,6 +15,15 @@ describe('auth token helpers', () => {
   it('stores and clears the token', () => {
     setStoredToken('abc')
     expect(getStoredToken()).toBe('abc')
+    setStoredToken(null)
+    expect(getStoredToken()).toBeNull()
+  })
+
+  it('supports a non-persistent session token', () => {
+    localStorage.setItem('zwui.token', 'persisted')
+    setSessionToken('session')
+    expect(getStoredToken()).toBe('session')
+    expect(localStorage.getItem('zwui.token')).toBeNull()
     setStoredToken(null)
     expect(getStoredToken()).toBeNull()
   })
