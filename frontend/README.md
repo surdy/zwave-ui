@@ -21,6 +21,7 @@ talks to the existing zwave-js-ui backend over socket.io + REST.
 | `npm run lint` / `npm run lint:fix` | Lint (and auto-fix) with ESLint. |
 | `npm run format` | Format `src/` with Prettier. |
 | `npm run test` / `npm run test:watch` | Run unit tests with Vitest. |
+| `npm run test:e2e` | Boot a local mock-stick backend + run the Playwright integration smoke test. |
 
 ## Backend proxy target
 
@@ -32,6 +33,34 @@ VITE_BACKEND=http://localhost:8091 npm run dev
 
 > You may point it at a remote instance for **read-only** visual comparison, but
 > never trigger mutating actions against a production controller.
+
+## Integration smoke test
+
+A thin end-to-end smoke test (Playwright) proves the whole stack works against a
+local **mock-stick** backend: the app loads, the realtime socket connects, the
+shell/nav renders, the mock device is listed, the theme toggle applies, and
+nothing throws.
+
+```bash
+npm run test:e2e
+```
+
+This single command (`scripts/e2e.mjs`):
+
+1. Locates an upstream `zwave-js-ui` checkout — adjacent to this repo by default,
+   or set `ZWAVE_JS_UI_DIR=/path/to/zwave-js-ui` (run `npm ci` in it once).
+2. Starts the fake controller (`fake-stick`, `tcp://127.0.0.1:5555`) and the
+   backend server (`:8091`) — **or reuses them if already running** — writing a
+   throwaway `store/settings.json` (restored on exit).
+3. Builds the frontend and serves it with `vite preview` on `:8092`, then runs
+   the Playwright suite in `e2e/`.
+
+It only ever talks to the local mock backend — never a live instance. To run
+just the browser test against an already-served frontend + backend, use
+`npm run test:e2e:pw`.
+
+It also runs in CI on every PR and on `main` (`.github/workflows/e2e.yml`),
+where it checks out and installs the pinned upstream backend automatically.
 
 ## Structure
 
