@@ -1,5 +1,7 @@
 # Z-Wave UI
 
+[![CI](https://github.com/surdy/zwave-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/surdy/zwave-ui/actions/workflows/ci.yml) [![Container](https://github.com/surdy/zwave-ui/actions/workflows/container.yml/badge.svg)](https://github.com/surdy/zwave-ui/actions/workflows/container.yml)
+
 A modern, clean, mobile-friendly UI for [Z-Wave JS UI](https://github.com/zwave-js/zwave-js-ui).
 
 > **Simple by default, powerful when you need it.**
@@ -57,7 +59,7 @@ Assistant integration, store, etc.) is preserved.
 | Path | Description |
 |------|-------------|
 | `frontend/` | The new Vue 3 frontend application |
-| `docker/` | Dockerfile + compose for the drop-in container |
+| `Dockerfile` / `docker-compose.yml` / `docker/` | Drop-in container build, compose example, and run docs |
 | `docs/` | Research, competitive analysis, UX design, and mockups |
 | `.github/workflows/` | CI: lint, test, build, publish container image |
 

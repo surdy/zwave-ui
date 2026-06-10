@@ -1,0 +1,14 @@
+services:
+  zwave-ui:
+    image: ghcr.io/surdy/zwave-ui:latest
+    container_name: zwave-ui
+    restart: unless-stopped
+    ports:
+      - '8091:8091'
+    volumes:
+      - ./store:/usr/src/app/store
+    devices:
+      - /dev/ttyACM0:/dev/zwave
+    environment:
+      TZ: UTC
+      SESSION_SECRET: change-me
