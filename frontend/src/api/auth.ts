@@ -13,6 +13,8 @@ import { getJson, postJson } from './rest'
 
 const TOKEN_KEY = 'zwui.token'
 
+let sessionToken: string | null = null
+
 export interface AuthUser {
   username?: string
   token?: string
@@ -27,6 +29,7 @@ export interface AuthenticateResult {
 }
 
 export function getStoredToken(): string | null {
+  if (sessionToken) return sessionToken
   try {
     return localStorage.getItem(TOKEN_KEY)
   } catch {
@@ -35,9 +38,19 @@ export function getStoredToken(): string | null {
 }
 
 export function setStoredToken(token: string | null): void {
+  sessionToken = null
   try {
     if (token) localStorage.setItem(TOKEN_KEY, token)
     else localStorage.removeItem(TOKEN_KEY)
+  } catch {
+    /* storage unavailable; ignore */
+  }
+}
+
+export function setSessionToken(token: string | null): void {
+  sessionToken = token
+  try {
+    localStorage.removeItem(TOKEN_KEY)
   } catch {
     /* storage unavailable; ignore */
   }

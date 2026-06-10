@@ -4,12 +4,14 @@
  * global theme & advanced toggles, connection indicator, and the routed content
  * outlet. Owns the realtime connection bootstrap for the authenticated app.
  */
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useUiStore } from '@/stores/ui'
+import { fetchAuthEnabled, getStoredToken, isTokenValid, logout as apiLogout } from '@/api'
 import { useZwaveConnection } from '@/composables/useZwaveConnection'
 import { primaryNav } from './nav'
+import BaseButton from '@/components/base/BaseButton.vue'
 import BaseIcon from '@/components/base/BaseIcon.vue'
 import BaseSwitch from '@/components/base/BaseSwitch.vue'
 import ThemeToggle from './ThemeToggle.vue'
@@ -19,7 +21,9 @@ const route = useRoute()
 const router = useRouter()
 const ui = useUiStore()
 const { advanced } = storeToRefs(ui)
-const { connect } = useZwaveConnection()
+const { connect, disconnect } = useZwaveConnection()
+const showLogout = ref(false)
+const loggingOut = ref(false)
 
 const pageTitle = computed(() => {
   const fromMeta = route.meta?.title
@@ -31,10 +35,32 @@ function setAdvanced(value: boolean) {
   ui.setAdvanced(value)
 }
 
+async function refreshAuthState() {
+  try {
+    showLogout.value = (await fetchAuthEnabled()) && isTokenValid(getStoredToken())
+  } catch {
+    showLogout.value = false
+  }
+}
+
+async function logOut() {
+  if (loggingOut.value) return
+  loggingOut.value = true
+  try {
+    await apiLogout()
+    disconnect()
+    await router.replace({ name: 'login' })
+  } finally {
+    loggingOut.value = false
+    showLogout.value = false
+  }
+}
+
 onMounted(async () => {
   try {
     const state = await connect()
     if (state === null) router.replace({ name: 'login' })
+    await refreshAuthState()
   } catch {
     /* connection status is surfaced by the indicator */
   }
@@ -75,6 +101,16 @@ onMounted(async () => {
           />
         </label>
         <ThemeToggle />
+        <BaseButton
+          v-if="showLogout"
+          class="topbar__logout"
+          variant="ghost"
+          size="sm"
+          :loading="loggingOut"
+          @click="logOut"
+        >
+          Log out
+        </BaseButton>
       </div>
     </header>
 
@@ -137,6 +173,9 @@ onMounted(async () => {
 }
 .topbar__adv :deep(.switch__label) {
   display: none;
+}
+.topbar__logout {
+  flex: none;
 }
 
 /* ---------- Content ---------- */
