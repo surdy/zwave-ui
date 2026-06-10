@@ -32,6 +32,24 @@ export default defineConfig({
       '/version': { target: backend, changeOrigin: true },
     },
   },
+  // `vite preview` serves the production build; mirror the dev proxy so the
+  // integration smoke test (and manual preview) can reach a real backend.
+  preview: {
+    port: 8092,
+    proxy: {
+      '/socket.io': {
+        target: backend,
+        changeOrigin: true,
+        ws: true,
+      },
+      '/api': {
+        target: backend,
+        changeOrigin: true,
+      },
+      '/health': { target: backend, changeOrigin: true },
+      '/version': { target: backend, changeOrigin: true },
+    },
+  },
   test: {
     environment: 'jsdom',
     globals: true,
