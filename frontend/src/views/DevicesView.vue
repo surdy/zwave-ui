@@ -145,16 +145,6 @@ function formatLastSeen(ts?: number): string {
       </AdvancedOnly>
     </div>
 
-    <AdvancedOnly>
-      <div class="devices__automation">
-        <span class="devices__automation-label">Automation</span>
-        <RouterLink :to="{ name: 'scenes' }"><BaseButton variant="secondary">Scenes</BaseButton></RouterLink>
-        <RouterLink :to="{ name: 'config-templates' }">
-          <BaseButton variant="secondary">Configuration templates</BaseButton>
-        </RouterLink>
-      </div>
-    </AdvancedOnly>
-
     <!-- Empty states -->
     <EmptyState
       v-if="allDevices.length === 0"
@@ -257,19 +247,6 @@ function formatLastSeen(ts?: number): string {
 }
 .devices__toggle {
   display: inline-flex;
-}
-.devices__automation {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--s-2);
-  margin-top: var(--s-3);
-}
-.devices__automation-label {
-  font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--color-text-muted);
-  margin-right: var(--s-1);
 }
 .devices__room {
   display: grid;

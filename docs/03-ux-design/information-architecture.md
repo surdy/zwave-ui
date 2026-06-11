@@ -15,9 +15,16 @@ PRIMARY NAV (bottom bar on mobile · side rail on desktop)
   (Favorites +      (all nodes,      (Smart Start    (map, controller (onboarding,
    rooms, alerts)    grouped)         QR + classic)   health, backup)  integrations,
                                                                         system)
+
+  ⚡ Automations  ← appears between Network and Settings only when Advanced is on
+  (Scenes · Configuration templates)
 ```
 
-Automation (Scenes, Templates) and Diagnostics (Zniffer, Logs) are **Advanced-tier** sub-areas reached from Devices/Network or revealed by the Advanced switch — not top-level for everyone.
+Automations (Scenes, Templates) is an **Advanced-tier** area: it has its own
+top-level nav entry, but that entry only appears once the **Advanced** switch is
+on, keeping the default nav minimal. Diagnostics (Zniffer, Logs) stays nested
+under Network and is likewise revealed by the Advanced switch — neither is
+top-level for everyone.
 
 ---
 
@@ -88,8 +95,8 @@ The 3,104-line monolith, decomposed and searchable.
 | Controller Chart | Network › Health |
 | Zniffer | Network › Diagnostics (Expert) |
 | Debug | Network › Diagnostics (Expert) |
-| Scenes | Devices/Automation › Scenes (Advanced) |
-| Configuration Templates | Devices/Automation › Templates (Advanced) |
+| Scenes | Automations › Scenes (Advanced) |
+| Configuration Templates | Automations › Configuration templates (Advanced) |
 | Store | Settings › System › Files (Expert) |
 | Login | Auth |
 

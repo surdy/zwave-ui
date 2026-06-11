@@ -1,7 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { createPinia } from 'pinia'
+import { createPinia, setActivePinia } from 'pinia'
 import AppShell from '@/components/layout/AppShell.vue'
+import { useUiStore } from '@/stores/ui'
 
 // The shell opens a realtime connection on mount; stub it so this stays a pure
 // render test (connectivity is covered by the store/api unit tests).
@@ -32,5 +33,16 @@ describe('AppShell', () => {
     expect(text).toContain('Add')
     expect(text).toContain('Network')
     expect(text).toContain('Settings')
+  })
+
+  it('hides Automations until Advanced mode is enabled', async () => {
+    const pinia = createPinia()
+    setActivePinia(pinia)
+    const wrapper = mount(AppShell, { global: { plugins: [pinia] } })
+    expect(wrapper.text()).not.toContain('Automations')
+
+    useUiStore().setAdvanced(true)
+    await wrapper.vm.$nextTick()
+    expect(wrapper.text()).toContain('Automations')
   })
 })

@@ -55,7 +55,7 @@ The existing app exposes ~82 capabilities, of which **only ~27% are everyday** �
 | 🔴 **Expert** | Badged + confirmation-guarded, off the everyday path | Zniffer, debug logs, driver function, NVM/store, hard reset |
 
 ## 🧭 Information architecture at a glance
-12 flat technical routes → **5 task-based areas**: **Dashboard · Devices · Add · Network · Settings** (with Automation & Diagnostics nested as Advanced). Every old route is preserved — just relocated. See [information-architecture.md](docs/03-ux-design/information-architecture.md).
+12 flat technical routes → task-based areas: **Dashboard · Devices · Add · Network · Settings**, plus an **Automations** area (Scenes, Configuration templates) that surfaces as its own nav entry when Advanced mode is on. Diagnostics stays nested under Network (also Advanced). Every old route is preserved — just relocated. See [information-architecture.md](docs/03-ux-design/information-architecture.md).
 
 ## ✅ Design goals → how they're met
 | Goal | Approach |

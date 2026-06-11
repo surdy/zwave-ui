@@ -31,6 +31,10 @@ const pageTitle = computed(() => {
   return primaryNav.find((n) => n.name === route.name)?.label ?? 'Z-Wave UI'
 })
 
+// Advanced-tier areas (e.g. Automations) only surface while Advanced is on,
+// keeping the default rail/bottom bar minimal.
+const navItems = computed(() => primaryNav.filter((item) => !item.advanced || advanced.value))
+
 function setAdvanced(value: boolean) {
   ui.setAdvanced(value)
 }
@@ -77,7 +81,7 @@ onMounted(async () => {
       </RouterLink>
       <nav class="rail__nav">
         <RouterLink
-          v-for="item in primaryNav"
+          v-for="item in navItems"
           :key="item.name"
           :to="item.to"
           class="nav-link"
@@ -122,7 +126,7 @@ onMounted(async () => {
     <!-- Mobile bottom navigation -->
     <nav class="bottomnav" aria-label="Primary">
       <RouterLink
-        v-for="item in primaryNav"
+        v-for="item in navItems"
         :key="item.name"
         :to="item.to"
         class="bottomnav__link"

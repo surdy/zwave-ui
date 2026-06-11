@@ -73,16 +73,10 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Zniffer' },
       },
       {
-        path: 'scenes',
-        name: 'scenes',
-        component: () => import('@/views/ScenesView.vue'),
-        meta: { title: 'Scenes' },
-      },
-      {
-        path: 'templates',
-        name: 'config-templates',
-        component: () => import('@/views/ConfigTemplatesView.vue'),
-        meta: { title: 'Configuration templates' },
+        path: 'automations',
+        name: 'automations',
+        component: () => import('@/views/AutomationsView.vue'),
+        meta: { title: 'Automations' },
       },
       {
         path: 'settings',
