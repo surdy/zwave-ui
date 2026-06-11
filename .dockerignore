@@ -34,5 +34,5 @@ zwave-js-ui
 **/*.md
 LICENSE
 
-# Compose examples are runtime docs, not build inputs
-docker
+# docker/nginx/ holds the standalone image's nginx template (a build input).
+# docker/README.md is already ignored above via **/*.md.
