@@ -72,6 +72,17 @@ same volumes, same ports) but serves our UI. Because Docker is not always
 available locally, the image is built and published by CI
 (GitHub Actions → GHCR: `ghcr.io/surdy/zwave-ui`).
 
+## Deployment topologies
+
+The same `Dockerfile` also produces a **standalone frontend** image
+(`--target standalone` → `ghcr.io/surdy/zwave-ui-frontend`): a small nginx image
+that serves the SPA and reverse-proxies the backend paths (`/socket.io`, `/api`,
+`/health`, `/version`) to a **separate** `zwave-js-ui` backend via `$BACKEND_URL`.
+This enables a **split** deployment where one backend/stick serves multiple
+frontends (Z-Wave UI, the stock UI, and Home Assistant via the Z-Wave JS WS
+server). Full details, diagrams, and ready-to-use Docker Compose / Podman Quadlet
+manifests are in [`docs/06-deployment/`](../06-deployment/).
+
 ## Repository layout
 
 ```
@@ -85,8 +96,9 @@ zwave-ui/
 │   │   ├── router/
 │   │   └── styles/      # design tokens + base CSS
 │   └── vite.config.ts   # dev proxy to the backend
-├── docker/              # Dockerfile (overlay) + docker-compose.yml
-├── docs/                # research, design, mockups, this guide
+├── docker/              # nginx template + run docs for the images
+├── deploy/              # split-deployment manifests (compose, quadlet)
+├── docs/                # research, design, mockups, deployment, this guide
 └── .github/workflows/   # lint, test, build, publish image
 ```
 

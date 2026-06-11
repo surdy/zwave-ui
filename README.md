@@ -54,13 +54,20 @@ The container image builds the new frontend and overlays it on the official
 `zwavejs/zwave-js-ui` image, so all backend behavior (Z-Wave, MQTT, Home
 Assistant integration, store, etc.) is preserved.
 
+This is the **all-in-one** image (`ghcr.io/surdy/zwave-ui`). You can also run a
+**split** deployment — the frontend as a standalone container
+(`ghcr.io/surdy/zwave-ui-frontend`) reverse-proxying to a separate `zwave-js-ui`
+backend — so one backend/stick can serve multiple frontends. See
+[**Deployment**](./docs/06-deployment/).
+
 ## Repository layout
 
 | Path | Description |
 |------|-------------|
 | `frontend/` | The new Vue 3 frontend application |
-| `Dockerfile` / `docker-compose.yml` / `docker/` | Drop-in container build, compose example, and run docs |
-| `docs/` | Research, competitive analysis, UX design, and mockups |
+| `Dockerfile` / `docker-compose.yml` / `docker/` | Container build (all-in-one **and** standalone frontend targets), all-in-one compose, run docs |
+| `deploy/` | Split-deployment manifests: Docker Compose + Podman Quadlet |
+| `docs/` | Research, competitive analysis, UX design, mockups, and deployment guides |
 | `.github/workflows/` | CI: lint, test, build, publish container image |
 
 ## Documentation
@@ -71,6 +78,8 @@ All research and design work lives in [`docs/`](./docs/):
 - [`docs/02-competitive-analysis/`](./docs/02-competitive-analysis/) — SmartThings, Hubitat, Homey, Home Assistant, Apple/Google Home
 - [`docs/03-ux-design/`](./docs/03-ux-design/) — design principles, information architecture, design system, user flows
 - [`docs/04-mockups/`](./docs/04-mockups/) — responsive HTML mockups
+- [`docs/05-implementation/`](./docs/05-implementation/) — architecture, backend API contract, contributor guide
+- [`docs/06-deployment/`](./docs/06-deployment/) — all-in-one vs split deployment, Docker Compose, Podman Quadlet
 
 ## Status
 
