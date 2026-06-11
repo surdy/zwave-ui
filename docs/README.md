@@ -27,10 +27,16 @@ docs/
 ├── 04-mockups/                 Interactive responsive HTML mockups
 │   ├── index.html              ← start here
 │   └── dashboard / devices / device-detail / add-device / network / settings / onboarding
-└── 05-implementation/          How the real app is built (for contributors)
-    ├── architecture.md         ← reuse-backend / replace-frontend, tech stack, container
-    ├── backend-api.md          ← authoritative socket.io + REST + ZWAVE_API contract
-    └── agent-guide.md          ← dev/test loop, conventions, definition of done
+├── 05-implementation/          How the real app is built (for contributors)
+│   ├── architecture.md         ← reuse-backend / replace-frontend, tech stack, container
+│   ├── backend-api.md          ← authoritative socket.io + REST + ZWAVE_API contract
+│   └── agent-guide.md          ← dev/test loop, conventions, definition of done
+└── 06-deployment/              How to run it (all-in-one vs split)
+    ├── README.md               ← modes + which to use + one-driver-per-stick
+    ├── docker-compose.md       ← split deployment via Docker Compose
+    ├── podman-quadlet.md       ← split deployment via systemd/Quadlet
+    ├── architecture.md         ← component + data-flow (proxy, shared driver, HA)
+    └── development.md          ← run vs any backend, build both image targets
 ```
 
 (The cloned upstream repo lives alongside in `../zwave-js-ui/` as the analysis reference.)
@@ -68,5 +74,6 @@ existing zwave-js-ui backend, shipped as a drop-in container image.
 - **How it's built:** [05-implementation/architecture.md](docs/05-implementation/architecture.md)
 - **Backend API contract:** [05-implementation/backend-api.md](docs/05-implementation/backend-api.md)
 - **Contributor guide (dev/test loop, conventions):** [05-implementation/agent-guide.md](docs/05-implementation/agent-guide.md)
+- **How to deploy it (all-in-one or split):** [06-deployment/](docs/06-deployment/)
 - **Live progress:** [GitHub Issues](https://github.com/surdy/zwave-ui/issues) (grouped by milestones M1–M6)
 
