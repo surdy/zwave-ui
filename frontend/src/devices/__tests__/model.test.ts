@@ -93,10 +93,21 @@ describe('batteryInfo / needsAttention', () => {
     expect(batteryInfo(node({ id: 1, batteryLevel: 15 }))).toEqual({ level: 15, low: true })
   })
 
+  it('reads minBatteryLevel (the field zwave-js-ui actually sends)', () => {
+    expect(batteryInfo(node({ id: 1, minBatteryLevel: 80 }))).toEqual({ level: 80, low: false })
+    expect(batteryInfo(node({ id: 1, minBatteryLevel: 15 }))).toEqual({ level: 15, low: true })
+    // minBatteryLevel takes precedence over the legacy batteryLevel fallback
+    expect(batteryInfo(node({ id: 1, minBatteryLevel: 5, batteryLevel: 99 }))).toEqual({
+      level: 5,
+      low: true,
+    })
+  })
+
   it('flags offline or low-battery devices', () => {
     expect(needsAttention(node({ id: 1, status: 'Alive', batteryLevel: 90 }))).toBe(false)
     expect(needsAttention(node({ id: 1, status: 'Dead' }))).toBe(true)
     expect(needsAttention(node({ id: 1, batteryLevel: 10 }))).toBe(true)
+    expect(needsAttention(node({ id: 1, minBatteryLevel: 10 }))).toBe(true)
   })
 })
 

@@ -60,10 +60,20 @@ export interface BatteryInfo {
   low: boolean
 }
 
-/** Battery reading for battery-powered devices, else null. */
+/**
+ * Battery reading for battery-powered devices, else null.
+ *
+ * zwave-js-ui exposes battery as `minBatteryLevel` (the minimum across a node's
+ * endpoints, derived from the Battery CC `level` value) — it does not send a
+ * single `batteryLevel` field. We read `minBatteryLevel` first and keep
+ * `batteryLevel` as a fallback for forward-compatibility.
+ */
 export function batteryInfo(node: ZwaveNode): BatteryInfo | null {
-  if (typeof node.batteryLevel !== 'number') return null
-  return { level: node.batteryLevel, low: node.batteryLevel <= 20 }
+  const level = [node.minBatteryLevel, node.batteryLevel].find(
+    (v): v is number => typeof v === 'number',
+  )
+  if (level === undefined) return null
+  return { level, low: level <= 20 }
 }
 
 function values(node: ZwaveNode): ValueId[] {
