@@ -39,6 +39,12 @@ const SETTINGS = {
     enabled: true,
     logLevel: 'info',
     serverEnabled: true,
+    // The mock controller emulates a raw serial stream over TCP. The
+    // soft-reset re-sync (close + reopen the port mid-handshake) is timing
+    // sensitive and can desync the mock's frame parser on slower/!arm64 CI
+    // runners ("does not start with SOF"), crashing fake-stick. We don't need
+    // soft reset against a mock, so disable it for a deterministic handshake.
+    enableSoftReset: false,
   },
   mqtt: { disabled: true },
   gateway: { type: 0, payloadType: 0, nodeNames: true, hassDiscovery: false },
@@ -47,6 +53,13 @@ const SETTINGS = {
 /** Things we started and must clean up. */
 const started = []
 let settingsBackup = null // { path, prior: string | null }
+
+// fake-stick is managed on its own so we can restart it if it crashes mid
+// handshake; the backend's zwave-js driver auto-reconnects on the next attempt.
+let fakeStickChild = null
+let fakeStickActive = false
+let fakeStickRestarts = 0
+const MAX_FAKE_STICK_RESTARTS = 15
 
 function log(msg) {
   process.stdout.write(`[e2e] ${msg}\n`)
@@ -85,13 +98,41 @@ async function backendUp(port) {
   }
 }
 
-async function waitFor(label, probe, timeoutMs = 90_000) {
-  const deadline = Date.now() + timeoutMs
-  while (Date.now() < deadline) {
-    if (await probe()) return
-    await new Promise((r) => setTimeout(r, 750))
-  }
-  throw new Error(`Timed out waiting for ${label} after ${timeoutMs}ms`)
+/** Resolve once `regex` matches a line on the child's stdout/stderr. */
+function waitForStdout(child, regex, label, timeoutMs = 60_000) {
+  return new Promise((resolve, reject) => {
+    const onData = (chunk) => {
+      if (regex.test(chunk.toString())) finish()
+    }
+    const onExit = () => finish(new Error(`${label} exited before becoming ready`))
+    const timer = setTimeout(
+      () => finish(new Error(`Timed out waiting for ${label} after ${timeoutMs}ms`)),
+      timeoutMs,
+    )
+    function finish(err) {
+      clearTimeout(timer)
+      child.stdout.off('data', onData)
+      child.stderr.off('data', onData)
+      child.off('exit', onExit)
+      if (err) reject(err)
+      else resolve()
+    }
+    child.stdout.on('data', onData)
+    child.stderr.on('data', onData)
+    child.on('exit', onExit)
+  })
+}
+
+/** Resolve once the child process has exited (or after `timeoutMs`). */
+function awaitExit(child, timeoutMs = 5_000) {
+  return new Promise((resolve) => {
+    if (child.exitCode !== null || child.signalCode !== null) return resolve()
+    const timer = setTimeout(resolve, timeoutMs)
+    child.once('exit', () => {
+      clearTimeout(timer)
+      resolve()
+    })
+  })
 }
 
 /** Spawn a long-running child in its own process group, prefixing its output. */
@@ -134,6 +175,114 @@ function stopProcess(child) {
   }
 }
 
+/** Spawn fake-stick once, prefixing output and auto-restarting on crash. */
+function spawnFakeStick() {
+  const child = spawn('npm', ['run', 'fake-stick'], {
+    cwd: UPSTREAM_DIR,
+    detached: true,
+    stdio: ['ignore', 'pipe', 'pipe'],
+    env: { ...process.env },
+  })
+  fakeStickChild = child
+  const prefix = (chunk) =>
+    chunk
+      .toString()
+      .split('\n')
+      .filter(Boolean)
+      .forEach((line) => process.stdout.write(`[fake-stick] ${line}\n`))
+  child.stdout.on('data', prefix)
+  child.stderr.on('data', prefix)
+  child.on('exit', (code, signal) => {
+    if (child.killedByUs || !fakeStickActive) return
+    if (fakeStickRestarts >= MAX_FAKE_STICK_RESTARTS) {
+      fail(`fake-stick crashed ${fakeStickRestarts} times; giving up`)
+      return
+    }
+    fakeStickRestarts += 1
+    log(
+      `fake-stick exited (code=${code} signal=${signal}); ` +
+        `restarting (#${fakeStickRestarts}) — backend will reconnect`,
+    )
+    setTimeout(() => {
+      if (fakeStickActive) spawnFakeStick()
+    }, 1000)
+  })
+  return child
+}
+
+/** Start fake-stick and wait until it reports it is listening (via stdout). */
+async function startFakeStick() {
+  log('starting fake-stick: npm run fake-stick')
+  fakeStickActive = true
+  const child = spawnFakeStick()
+  // Wait for the listening line rather than TCP-probing the mock: opening and
+  // tearing down a probe socket against the emulated serial stream can poison
+  // the controller's frame parser.
+  await waitForStdout(child, /Server listening on tcp/i, 'fake-stick', 60_000)
+}
+
+function stopFakeStick() {
+  fakeStickActive = false
+  const child = fakeStickChild
+  fakeStickChild = null
+  if (!child) return
+  child.killedByUs = true
+  try {
+    process.kill(-child.pid, 'SIGTERM')
+  } catch {
+    try {
+      child.kill('SIGTERM')
+    } catch {
+      /* already gone */
+    }
+  }
+}
+
+/**
+ * Start the backend and wait until its zwave-js driver reports ready. The mock
+ * controller occasionally crashes mid-handshake (an upstream TCP-framing race
+ * that is far more frequent on CI than on a local machine); fake-stick
+ * auto-restarts, but the backend's own reconnect backoff grows quickly
+ * (1→2→4→8→15s) and can starve the retries. So if the driver isn't ready in
+ * time, we kill and respawn the backend: a fresh process resets the backoff to
+ * fast retries, giving more independent handshake attempts. Once the driver is
+ * ready, node 2 is in the INITED payload and the smoke test can proceed even if
+ * the mock later dies.
+ */
+async function startBackendUntilReady() {
+  const READY_RE = /Driver is READY|Z-Wave driver is ready/i
+  const ATTEMPT_TIMEOUT = 30_000
+  const MAX_ATTEMPTS = 6
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
+    const child = startProcess('backend', 'npm', ['run', 'server'], {
+      env: { PORT: String(BACKEND_PORT) },
+    })
+    try {
+      await waitForStdout(
+        child,
+        READY_RE,
+        `backend driver-ready (attempt ${attempt}/${MAX_ATTEMPTS})`,
+        ATTEMPT_TIMEOUT,
+      )
+      log(`backend driver ready (attempt ${attempt}/${MAX_ATTEMPTS})`)
+      return
+    } catch (err) {
+      if (attempt === MAX_ATTEMPTS) {
+        stopProcess(child)
+        throw new Error(
+          `backend never reached driver-ready after ${MAX_ATTEMPTS} attempts: ${err.message}`,
+        )
+      }
+      log(`${err.message}; restarting backend`)
+      stopProcess(child)
+      await awaitExit(child)
+      const idx = started.indexOf(child)
+      if (idx >= 0) started.splice(idx, 1)
+      await new Promise((r) => setTimeout(r, 1000))
+    }
+  }
+}
+
 function writeSettings() {
   const storeDir = path.join(UPSTREAM_DIR, 'store')
   const file = path.join(storeDir, 'settings.json')
@@ -158,6 +307,7 @@ function restoreSettings() {
 }
 
 function cleanup() {
+  stopFakeStick()
   for (const child of started) stopProcess(child)
   started.length = 0
   restoreSettings()
@@ -185,19 +335,14 @@ async function main() {
   if (reuseFakeStick) {
     log(`reusing fake-stick already listening on :${FAKE_STICK_PORT}`)
   } else {
-    startProcess('fake-stick', 'npm', ['run', 'fake-stick'])
-    await waitFor('fake-stick', () => tcpUp(FAKE_STICK_PORT), 60_000)
+    await startFakeStick()
     log('fake-stick ready')
   }
 
   if (reuseBackend) {
     log(`reusing backend already listening on :${BACKEND_PORT}`)
   } else {
-    startProcess('backend', 'npm', ['run', 'server'], {
-      env: { PORT: String(BACKEND_PORT) },
-    })
-    await waitFor('backend', () => backendUp(BACKEND_PORT), 120_000)
-    log('backend ready')
+    await startBackendUntilReady()
   }
 
   // Run the Playwright smoke suite (it builds + serves the frontend itself).
