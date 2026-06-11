@@ -98,15 +98,6 @@ async function backendUp(port) {
   }
 }
 
-async function waitFor(label, probe, timeoutMs = 90_000) {
-  const deadline = Date.now() + timeoutMs
-  while (Date.now() < deadline) {
-    if (await probe()) return
-    await new Promise((r) => setTimeout(r, 750))
-  }
-  throw new Error(`Timed out waiting for ${label} after ${timeoutMs}ms`)
-}
-
 /** Resolve once `regex` matches a line on the child's stdout/stderr. */
 function waitForStdout(child, regex, label, timeoutMs = 60_000) {
   return new Promise((resolve, reject) => {
@@ -129,6 +120,18 @@ function waitForStdout(child, regex, label, timeoutMs = 60_000) {
     child.stdout.on('data', onData)
     child.stderr.on('data', onData)
     child.on('exit', onExit)
+  })
+}
+
+/** Resolve once the child process has exited (or after `timeoutMs`). */
+function awaitExit(child, timeoutMs = 5_000) {
+  return new Promise((resolve) => {
+    if (child.exitCode !== null || child.signalCode !== null) return resolve()
+    const timer = setTimeout(resolve, timeoutMs)
+    child.once('exit', () => {
+      clearTimeout(timer)
+      resolve()
+    })
   })
 }
 
@@ -235,6 +238,51 @@ function stopFakeStick() {
   }
 }
 
+/**
+ * Start the backend and wait until its zwave-js driver reports ready. The mock
+ * controller occasionally crashes mid-handshake (an upstream TCP-framing race
+ * that is far more frequent on CI than on a local machine); fake-stick
+ * auto-restarts, but the backend's own reconnect backoff grows quickly
+ * (1→2→4→8→15s) and can starve the retries. So if the driver isn't ready in
+ * time, we kill and respawn the backend: a fresh process resets the backoff to
+ * fast retries, giving more independent handshake attempts. Once the driver is
+ * ready, node 2 is in the INITED payload and the smoke test can proceed even if
+ * the mock later dies.
+ */
+async function startBackendUntilReady() {
+  const READY_RE = /Driver is READY|Z-Wave driver is ready/i
+  const ATTEMPT_TIMEOUT = 30_000
+  const MAX_ATTEMPTS = 6
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
+    const child = startProcess('backend', 'npm', ['run', 'server'], {
+      env: { PORT: String(BACKEND_PORT) },
+    })
+    try {
+      await waitForStdout(
+        child,
+        READY_RE,
+        `backend driver-ready (attempt ${attempt}/${MAX_ATTEMPTS})`,
+        ATTEMPT_TIMEOUT,
+      )
+      log(`backend driver ready (attempt ${attempt}/${MAX_ATTEMPTS})`)
+      return
+    } catch (err) {
+      if (attempt === MAX_ATTEMPTS) {
+        stopProcess(child)
+        throw new Error(
+          `backend never reached driver-ready after ${MAX_ATTEMPTS} attempts: ${err.message}`,
+        )
+      }
+      log(`${err.message}; restarting backend`)
+      stopProcess(child)
+      await awaitExit(child)
+      const idx = started.indexOf(child)
+      if (idx >= 0) started.splice(idx, 1)
+      await new Promise((r) => setTimeout(r, 1000))
+    }
+  }
+}
+
 function writeSettings() {
   const storeDir = path.join(UPSTREAM_DIR, 'store')
   const file = path.join(storeDir, 'settings.json')
@@ -294,11 +342,7 @@ async function main() {
   if (reuseBackend) {
     log(`reusing backend already listening on :${BACKEND_PORT}`)
   } else {
-    startProcess('backend', 'npm', ['run', 'server'], {
-      env: { PORT: String(BACKEND_PORT) },
-    })
-    await waitFor('backend', () => backendUp(BACKEND_PORT), 120_000)
-    log('backend ready')
+    await startBackendUntilReady()
   }
 
   // Run the Playwright smoke suite (it builds + serves the frontend itself).
