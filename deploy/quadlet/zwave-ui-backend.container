@@ -1,0 +1,23 @@
+[Unit]
+Description=Z-Wave JS UI backend container
+Wants=network-online.target
+After=network-online.target
+
+[Container]
+Image=docker.io/zwavejs/zwave-js-ui:11.19.1
+ContainerName=zwave-ui-backend
+# Adjust the host path for your controller; /dev/serial/by-id/... is recommended when available.
+AddDevice=/dev/ttyACM0:/dev/zwave
+# For rootful installs, replace %h with an absolute host path such as /var/lib/zwave-ui.
+Volume=%h/zwave-ui/store:/usr/src/app/store:Z
+Network=zwave-ui.network
+PublishPort=8091:8091
+Environment=TZ=UTC
+Environment=SESSION_SECRET=change-me
+
+[Service]
+Restart=always
+TimeoutStartSec=900
+
+[Install]
+WantedBy=default.target

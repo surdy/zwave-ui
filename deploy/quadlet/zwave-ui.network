@@ -1,0 +1,8 @@
+[Unit]
+Description=Z-Wave UI dedicated Podman network
+
+[Network]
+NetworkName=zwave-ui
+
+[Install]
+WantedBy=default.target

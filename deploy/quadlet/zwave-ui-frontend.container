@@ -1,0 +1,17 @@
+[Unit]
+Description=Z-Wave UI frontend container
+Requires=zwave-ui-backend.service
+After=zwave-ui-backend.service
+
+[Container]
+Image=ghcr.io/surdy/zwave-ui-frontend:latest
+ContainerName=zwave-ui-frontend
+Network=zwave-ui.network
+Environment=BACKEND_URL=http://zwave-ui-backend:8091
+PublishPort=8092:8080
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target
