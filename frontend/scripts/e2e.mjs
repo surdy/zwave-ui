@@ -123,7 +123,8 @@ function waitForStdout(child, regex, label, timeoutMs = 60_000) {
       child.stdout.off('data', onData)
       child.stderr.off('data', onData)
       child.off('exit', onExit)
-      err ? reject(err) : resolve()
+      if (err) reject(err)
+      else resolve()
     }
     child.stdout.on('data', onData)
     child.stderr.on('data', onData)
